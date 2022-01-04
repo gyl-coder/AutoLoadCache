@@ -2,9 +2,7 @@ package com.jarvis.cache.aop;
 
 import java.lang.reflect.Method;
 
-/**
- *
- */
+/** */
 public interface CacheAopProxyChain {
 
     /**

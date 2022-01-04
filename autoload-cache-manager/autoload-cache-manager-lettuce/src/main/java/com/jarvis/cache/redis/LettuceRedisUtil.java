@@ -3,6 +3,7 @@ package com.jarvis.cache.redis;
 import com.jarvis.cache.MSetParam;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
+
 import io.lettuce.core.AbstractRedisAsyncCommands;
 import io.lettuce.core.RedisFuture;
 import io.lettuce.core.api.StatefulConnection;
@@ -14,13 +15,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- *
- */
+/** */
 @Slf4j
 public class LettuceRedisUtil {
 
-    public static void executeMSet(AbstractRedisAsyncCommands<byte[], byte[]> pipeline, AbstractRedisCacheManager manager, Collection<MSetParam> params) throws Exception {
+    public static void executeMSet(
+            AbstractRedisAsyncCommands<byte[], byte[]> pipeline,
+            AbstractRedisCacheManager manager,
+            Collection<MSetParam> params)
+            throws Exception {
         CacheKeyTO cacheKeyTO;
         String cacheKey;
         String hfield;
@@ -48,7 +51,8 @@ public class LettuceRedisUtil {
                     pipeline.setex(key, expire, val);
                 }
             } else {
-                int hExpire = manager.getHashExpire() < 0 ? result.getExpire() : manager.getHashExpire();
+                int hExpire =
+                        manager.getHashExpire() < 0 ? result.getExpire() : manager.getHashExpire();
                 pipeline.hset(key, AbstractRedisCacheManager.KEY_SERIALIZER.serialize(hfield), val);
                 if (hExpire > 0) {
                     pipeline.expire(key, hExpire);
@@ -57,7 +61,12 @@ public class LettuceRedisUtil {
         }
     }
 
-    public static Map<CacheKeyTO, CacheWrapper<Object>> executeMGet(StatefulConnection<byte[], byte[]> connection, AbstractRedisAsyncCommands<byte[], byte[]> asyncCommands, AbstractRedisCacheManager cacheManager, Type returnType, Set<CacheKeyTO> keys) {
+    public static Map<CacheKeyTO, CacheWrapper<Object>> executeMGet(
+            StatefulConnection<byte[], byte[]> connection,
+            AbstractRedisAsyncCommands<byte[], byte[]> asyncCommands,
+            AbstractRedisCacheManager cacheManager,
+            Type returnType,
+            Set<CacheKeyTO> keys) {
         String hfield;
         String cacheKey;
         byte[] key;
@@ -76,7 +85,10 @@ public class LettuceRedisUtil {
                 if (null == hfield || hfield.isEmpty()) {
                     futures[i] = asyncCommands.get(key);
                 } else {
-                    futures[i] = asyncCommands.hget(key, AbstractRedisCacheManager.KEY_SERIALIZER.serialize(hfield));
+                    futures[i] =
+                            asyncCommands.hget(
+                                    key,
+                                    AbstractRedisCacheManager.KEY_SERIALIZER.serialize(hfield));
                 }
                 i++;
             }
@@ -92,7 +104,9 @@ public class LettuceRedisUtil {
                 if (null == data || data.length == 0) {
                     continue;
                 }
-                CacheWrapper<Object> value = (CacheWrapper<Object>)cacheManager.getSerializer().deserialize(data, returnType);
+                CacheWrapper<Object> value =
+                        (CacheWrapper<Object>)
+                                cacheManager.getSerializer().deserialize(data, returnType);
                 if (null != value) {
                     res.put(cacheKeyTO, value);
                 }

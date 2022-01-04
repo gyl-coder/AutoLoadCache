@@ -1,7 +1,5 @@
 package com.jarvis.cache.serializer.protobuf;
-/**
- * @author zhengenshen@gmail.com
- */
+/** @author zhengenshen@gmail.com */
 public class ReadByteBuf {
 
     private byte[] array;
@@ -35,5 +33,4 @@ public class ReadByteBuf {
         System.arraycopy(array, readerIndex, newArray, 0, newArray.length);
         return newArray;
     }
-
 }

@@ -1,21 +1,16 @@
 package com.jarvis.cache.demo.config;
 
-import com.jarvis.cache.serializer.FastjsonSerializer;
-import com.jarvis.cache.serializer.ISerializer;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.jarvis.cache.ICacheManager;
 import com.jarvis.cache.autoconfigure.AutoloadCacheProperties;
 import com.jarvis.cache.clone.ICloner;
 import com.jarvis.cache.map.MapCacheManager;
+import com.jarvis.cache.serializer.FastjsonSerializer;
+import com.jarvis.cache.serializer.ISerializer;
 
-/**
- * 为了方便测试，使用Map缓存
- * 
- *
- */
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/** 为了方便测试，使用Map缓存 */
 @Configuration
 public class AutoloadCacheConfiguration {
 

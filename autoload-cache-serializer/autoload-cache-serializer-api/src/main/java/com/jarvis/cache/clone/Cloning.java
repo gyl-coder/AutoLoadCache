@@ -9,9 +9,7 @@ import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- *
- */
+/** */
 public class Cloning implements ICloner {
 
     private final Cloner cloner = new Cloner();
@@ -22,8 +20,11 @@ public class Cloning implements ICloner {
             return null;
         }
         Class<?> clazz = obj.getClass();
-        if (BeanUtil.isPrimitive(obj) || clazz.isEnum() || obj instanceof Class || clazz.isAnnotation()
-                || clazz.isSynthetic()) {// 常见不会被修改的数据类型
+        if (BeanUtil.isPrimitive(obj)
+                || clazz.isEnum()
+                || obj instanceof Class
+                || clazz.isAnnotation()
+                || clazz.isSynthetic()) { // 常见不会被修改的数据类型
             return obj;
         }
         if (obj instanceof Date) {
@@ -36,8 +37,10 @@ public class Cloning implements ICloner {
         if (clazz.isArray()) {
             Object[] arr = (Object[]) obj;
 
-            Object[] res = ((Object) clazz == (Object) Object[].class) ? (Object[]) new Object[arr.length]
-                    : (Object[]) Array.newInstance(clazz.getComponentType(), arr.length);
+            Object[] res =
+                    ((Object) clazz == (Object) Object[].class)
+                            ? (Object[]) new Object[arr.length]
+                            : (Object[]) Array.newInstance(clazz.getComponentType(), arr.length);
             for (int i = 0; i < arr.length; i++) {
                 res[i] = deepClone(arr[i], null);
             }
@@ -53,8 +56,13 @@ public class Cloning implements ICloner {
         }
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         if (args.length != genericParameterTypes.length) {
-            throw new Exception("the length of " + method.getDeclaringClass().getName() + "." + method.getName()
-                    + " must " + genericParameterTypes.length);
+            throw new Exception(
+                    "the length of "
+                            + method.getDeclaringClass().getName()
+                            + "."
+                            + method.getName()
+                            + " must "
+                            + genericParameterTypes.length);
         }
         Object[] res = new Object[args.length];
         int len = genericParameterTypes.length;
@@ -63,5 +71,4 @@ public class Cloning implements ICloner {
         }
         return res;
     }
-
 }

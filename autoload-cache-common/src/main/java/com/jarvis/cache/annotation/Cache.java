@@ -9,11 +9,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * 缓存注解
- *
- *
- */
+/** 缓存注解 */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Inherited
@@ -42,8 +38,7 @@ public @interface Cache {
     String expireExpression() default "";
 
     /**
-     * 预警自动刷新时间(单位：秒)，必须满足 0 &lt; alarmTime &lt; expire才有效 当缓存在alarmTime
-     * 时间内即将过期的话，会自动刷新缓存内容；
+     * 预警自动刷新时间(单位：秒)，必须满足 0 &lt; alarmTime &lt; expire才有效 当缓存在alarmTime 时间内即将过期的话，会自动刷新缓存内容；
      *
      * @return 时间
      */
@@ -64,17 +59,15 @@ public @interface Cache {
     String hfield() default "";
 
     /**
-     * 是否启用自动加载缓存， 缓存时间必须大于120秒时才有效
-     * 如果magic为true时，会强制关闭自动加载功能
+     * 是否启用自动加载缓存， 缓存时间必须大于120秒时才有效 如果magic为true时，会强制关闭自动加载功能
      *
      * @return boolean
      */
     boolean autoload() default false;
 
     /**
-     * 是否总是缓存（常驻内存）
-     *       默认不开启;
-     *       如果开启则缓存的有效期为永久,高频/低频/后台刷新异常则均不影响缓存的生命周期
+     * 是否总是缓存（常驻内存） 默认不开启; 如果开启则缓存的有效期为永久,高频/低频/后台刷新异常则均不影响缓存的生命周期
+     *
      * @return boolean
      */
     boolean alwaysCache() default false;
@@ -88,8 +81,7 @@ public @interface Cache {
     String autoloadCondition() default "";
 
     /**
-     * 当autoload为true时，缓存数据在 requestTimeout
-     * 秒之内没有使用了，就不进行自动加载数据,如果requestTimeout为0时，会一直自动加载
+     * 当autoload为true时，缓存数据在 requestTimeout 秒之内没有使用了，就不进行自动加载数据,如果requestTimeout为0时，会一直自动加载
      *
      * @return long 请求过期
      */
@@ -130,11 +122,7 @@ public @interface Cache {
      */
     int lockExpire() default 10;
 
-    /**
-     * 是否开启锁降级
-     *      默认不开启;
-     *      如果开启，当分布式锁抛异常时不使用分布式锁
-     */
+    /** 是否开启锁降级 默认不开启; 如果开启，当分布式锁抛异常时不使用分布式锁 */
     boolean openLockDown() default false;
 
     /**

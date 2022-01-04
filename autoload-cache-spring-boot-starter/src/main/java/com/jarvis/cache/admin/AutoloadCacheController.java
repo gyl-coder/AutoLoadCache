@@ -1,15 +1,4 @@
-
 package com.jarvis.cache.admin;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.jarvis.cache.CacheHandler;
 import com.jarvis.cache.aop.CacheAopProxyChain;
@@ -17,6 +6,15 @@ import com.jarvis.cache.to.AutoLoadTO;
 import com.jarvis.cache.to.CacheKeyTO;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -53,10 +51,12 @@ public class AutoloadCacheController {
             autoLoadVO.setLastLoadTime(formatDate(tmpTO.getLastLoadTime()));
             autoLoadVO.setExpire(tmpTO.getCache().expire());
             // 缓存过期时间
-            autoLoadVO.setExpireTime(formatDate(tmpTO.getLastLoadTime() + tmpTO.getCache().expire() * 1000));
+            autoLoadVO.setExpireTime(
+                    formatDate(tmpTO.getLastLoadTime() + tmpTO.getCache().expire() * 1000));
             autoLoadVO.setRequestTimeout(tmpTO.getCache().requestTimeout());
             autoLoadVO.setRequestTimeoutTime(
-                    formatDate(tmpTO.getLastRequestTime() + tmpTO.getCache().requestTimeout() * 1000));
+                    formatDate(
+                            tmpTO.getLastRequestTime() + tmpTO.getCache().requestTimeout() * 1000));
             autoLoadVO.setLoadCount(tmpTO.getLoadCnt());
             autoLoadVO.setAverageUseTime(tmpTO.getAverageUseTime());
 
@@ -67,7 +67,9 @@ public class AutoloadCacheController {
 
     @GetMapping("/args")
     public Object[] showArgs(String key, String hfield) {
-        CacheKeyTO cacheKeyTO = new CacheKeyTO(autoloadCacheHandler.getAutoLoadConfig().getNamespace(), key, hfield);
+        CacheKeyTO cacheKeyTO =
+                new CacheKeyTO(
+                        autoloadCacheHandler.getAutoLoadConfig().getNamespace(), key, hfield);
         AutoLoadTO tmpTO = autoloadCacheHandler.getAutoLoadHandler().getAutoLoadTO(cacheKeyTO);
         if (null != tmpTO && null != tmpTO.getArgs()) {
             return tmpTO.getArgs();
@@ -77,9 +79,11 @@ public class AutoloadCacheController {
 
     @PostMapping("removeCache")
     public boolean removeCache(String key, String hfield) {
-        CacheKeyTO cacheKeyTO = new CacheKeyTO(autoloadCacheHandler.getAutoLoadConfig().getNamespace(), key, hfield);
+        CacheKeyTO cacheKeyTO =
+                new CacheKeyTO(
+                        autoloadCacheHandler.getAutoLoadConfig().getNamespace(), key, hfield);
         try {
-            Set<CacheKeyTO> keys=new HashSet<>();
+            Set<CacheKeyTO> keys = new HashSet<>();
             keys.add(cacheKeyTO);
             autoloadCacheHandler.delete(keys);
             return true;
@@ -91,7 +95,9 @@ public class AutoloadCacheController {
 
     @PostMapping("removeAutoloadTO")
     public boolean removeAutoloadTO(String key, String hfield) {
-        CacheKeyTO cacheKeyTO = new CacheKeyTO(autoloadCacheHandler.getAutoLoadConfig().getNamespace(), key, hfield);
+        CacheKeyTO cacheKeyTO =
+                new CacheKeyTO(
+                        autoloadCacheHandler.getAutoLoadConfig().getNamespace(), key, hfield);
         try {
             autoloadCacheHandler.getAutoLoadHandler().removeAutoLoadTO(cacheKeyTO);
             return true;
@@ -103,7 +109,9 @@ public class AutoloadCacheController {
 
     @PostMapping("resetLastLoadTime")
     public boolean resetLastLoadTime(String key, String hfield) {
-        CacheKeyTO cacheKeyTO = new CacheKeyTO(autoloadCacheHandler.getAutoLoadConfig().getNamespace(), key, hfield);
+        CacheKeyTO cacheKeyTO =
+                new CacheKeyTO(
+                        autoloadCacheHandler.getAutoLoadConfig().getNamespace(), key, hfield);
         try {
             autoloadCacheHandler.getAutoLoadHandler().resetAutoLoadLastLoadTime(cacheKeyTO);
             return true;
@@ -113,14 +121,14 @@ public class AutoloadCacheController {
         }
     }
 
-    private static final ThreadLocal<SimpleDateFormat> FORMATER = new ThreadLocal<SimpleDateFormat>() {
+    private static final ThreadLocal<SimpleDateFormat> FORMATER =
+            new ThreadLocal<SimpleDateFormat>() {
 
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        }
-
-    };
+                @Override
+                protected SimpleDateFormat initialValue() {
+                    return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                }
+            };
 
     private String formatDate(long time) {
         if (time < 100000) {

@@ -1,14 +1,15 @@
 package com.jarvis.cache.serializer;
 
+import com.jarvis.cache.serializer.hession.HessionBigDecimalSerializerFactory;
+import com.jarvis.cache.serializer.hession.HessionSoftReferenceSerializerFactory;
+
+import com.jarvis.lib.util.BeanUtil;
 import com.caucho.hessian.io.AbstractHessianInput;
 import com.caucho.hessian.io.AbstractHessianOutput;
 import com.caucho.hessian.io.AbstractSerializerFactory;
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
 import com.caucho.hessian.io.SerializerFactory;
-import com.jarvis.cache.serializer.hession.HessionBigDecimalSerializerFactory;
-import com.jarvis.cache.serializer.hession.HessionSoftReferenceSerializerFactory;
-import com.jarvis.lib.util.BeanUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,9 +18,7 @@ import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- *
- */
+/** */
 public class HessianSerializer implements ISerializer<Object> {
 
     private static final SerializerFactory SERIALIZER_FACTORY = new SerializerFactory();
@@ -74,8 +73,11 @@ public class HessianSerializer implements ISerializer<Object> {
             return null;
         }
         Class<?> clazz = obj.getClass();
-        if (BeanUtil.isPrimitive(obj) || clazz.isEnum() || obj instanceof Class || clazz.isAnnotation()
-                || clazz.isSynthetic()) {// 常见不会被修改的数据类型
+        if (BeanUtil.isPrimitive(obj)
+                || clazz.isEnum()
+                || obj instanceof Class
+                || clazz.isAnnotation()
+                || clazz.isSynthetic()) { // 常见不会被修改的数据类型
             return obj;
         }
         if (obj instanceof Date) {
@@ -95,8 +97,13 @@ public class HessianSerializer implements ISerializer<Object> {
         }
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         if (args.length != genericParameterTypes.length) {
-            throw new Exception("the length of " + method.getDeclaringClass().getName() + "." + method.getName()
-                    + " must " + genericParameterTypes.length);
+            throw new Exception(
+                    "the length of "
+                            + method.getDeclaringClass().getName()
+                            + "."
+                            + method.getName()
+                            + " must "
+                            + genericParameterTypes.length);
         }
         Object[] res = new Object[args.length];
         int len = genericParameterTypes.length;
@@ -105,5 +112,4 @@ public class HessianSerializer implements ISerializer<Object> {
         }
         return res;
     }
-
 }

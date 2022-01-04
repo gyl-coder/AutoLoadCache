@@ -6,9 +6,7 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
 
-/**
- *
- */
+/** */
 public class CacheUtil {
 
     private static final String SPLIT_STR = "_";
@@ -93,7 +91,7 @@ public class CacheUtil {
      * 生成缓存Key
      *
      * @param className 类名称
-     * @param method    方法名称
+     * @param method 方法名称
      * @param arguments 参数
      * @return CacheKey 缓存Key
      */
@@ -110,11 +108,12 @@ public class CacheUtil {
      * 生成缓存Key的前缀
      *
      * @param className 类名称
-     * @param method    方法名称
+     * @param method 方法名称
      * @param arguments 参数
      * @return CacheKey 缓存Key
      */
-    public static String getDefaultCacheKeyPrefix(String className, String method, Object[] arguments) {
+    public static String getDefaultCacheKeyPrefix(
+            String className, String method, Object[] arguments) {
         StringBuilder sb = new StringBuilder();
         sb.append(className);
         if (null != method && method.length() > 0) {
@@ -122,5 +121,4 @@ public class CacheUtil {
         }
         return sb.toString();
     }
-
 }

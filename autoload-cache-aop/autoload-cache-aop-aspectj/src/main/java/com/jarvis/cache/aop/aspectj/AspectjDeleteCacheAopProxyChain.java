@@ -1,15 +1,14 @@
 package com.jarvis.cache.aop.aspectj;
 
 import com.jarvis.cache.aop.DeleteCacheAopProxyChain;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import java.lang.reflect.Method;
 
-/**
- *
- */
+/** */
 public class AspectjDeleteCacheAopProxyChain implements DeleteCacheAopProxyChain {
 
     private JoinPoint jp;
@@ -34,5 +33,4 @@ public class AspectjDeleteCacheAopProxyChain implements DeleteCacheAopProxyChain
         MethodSignature methodSignature = (MethodSignature) signature;
         return methodSignature.getMethod();
     }
-
 }

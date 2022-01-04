@@ -12,6 +12,7 @@ import com.jarvis.cache.serializer.HessianSerializer;
 import com.jarvis.cache.serializer.ISerializer;
 import com.jarvis.cache.serializer.JdkSerializer;
 import com.jarvis.cache.serializer.KryoSerializer;
+
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.cluster.RedisClusterClient;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +40,6 @@ import java.lang.reflect.Field;
 /**
  * 对autoload-cache进行一些默认配置<br>
  * 如果需要自定义，需要自行覆盖即可
- *
- *
  */
 @Slf4j
 @Configuration
@@ -50,16 +49,20 @@ import java.lang.reflect.Field;
 @ConditionalOnProperty(value = "autoload.cache.enable", matchIfMissing = true)
 public class AutoloadCacheManageConfiguration {
 
-    private static final boolean hessianPresent = ClassUtils.isPresent(
-            "com.caucho.hessian.io.AbstractSerializerFactory", AutoloadCacheManageConfiguration.class.getClassLoader());
+    private static final boolean hessianPresent =
+            ClassUtils.isPresent(
+                    "com.caucho.hessian.io.AbstractSerializerFactory",
+                    AutoloadCacheManageConfiguration.class.getClassLoader());
 
-    private static final boolean kryoPresent = ClassUtils.isPresent(
-            "com.esotericsoftware.kryo.Kryo", AutoloadCacheManageConfiguration.class.getClassLoader());
+    private static final boolean kryoPresent =
+            ClassUtils.isPresent(
+                    "com.esotericsoftware.kryo.Kryo",
+                    AutoloadCacheManageConfiguration.class.getClassLoader());
 
     /**
      * 表达式解析器{@link AbstractScriptParser AbstractScriptParser} 注入规则：<br>
-     * 如果导入了Ognl的jar包，优先 使用Ognl表达式：{@link OgnlParser
-     * OgnlParser}，否则使用{@link SpringELParser SpringELParser}<br>
+     * 如果导入了Ognl的jar包，优先 使用Ognl表达式：{@link OgnlParser OgnlParser}，否则使用{@link SpringELParser
+     * SpringELParser}<br>
      *
      * @return
      */
@@ -71,8 +74,8 @@ public class AutoloadCacheManageConfiguration {
 
     /**
      * * 序列化工具{@link ISerializer ISerializer} 注入规则：<br>
-     * 如果导入了Hessian的jar包，优先使用Hessian：{@link HessianSerializer
-     * HessianSerializer},否则使用{@link JdkSerializer JdkSerializer}<br>
+     * 如果导入了Hessian的jar包，优先使用Hessian：{@link HessianSerializer HessianSerializer},否则使用{@link
+     * JdkSerializer JdkSerializer}<br>
      *
      * @return
      */
@@ -108,18 +111,24 @@ public class AutoloadCacheManageConfiguration {
         @Bean
         @ConditionalOnMissingBean(ICacheManager.class)
         @ConditionalOnBean(JedisConnectionFactory.class)
-        public ICacheManager autoloadCacheCacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer,
-                                                       JedisConnectionFactory connectionFactory) {
+        public ICacheManager autoloadCacheCacheManager(
+                AutoloadCacheProperties config,
+                ISerializer<Object> serializer,
+                JedisConnectionFactory connectionFactory) {
             return createRedisCacheManager(config, serializer, connectionFactory);
         }
 
-        private ICacheManager createRedisCacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer, JedisConnectionFactory connectionFactory) {
+        private ICacheManager createRedisCacheManager(
+                AutoloadCacheProperties config,
+                ISerializer<Object> serializer,
+                JedisConnectionFactory connectionFactory) {
             RedisConnection redisConnection = null;
             try {
                 redisConnection = connectionFactory.getConnection();
                 AbstractRedisCacheManager cacheManager = null;
                 if (redisConnection instanceof JedisClusterConnection) {
-                    JedisClusterConnection redisClusterConnection = (JedisClusterConnection) redisConnection;
+                    JedisClusterConnection redisClusterConnection =
+                            (JedisClusterConnection) redisConnection;
                     // 优先使用JedisCluster; 因为JedisClusterConnection 批量处理，需要使用JedisCluster
                     JedisCluster jedisCluster = redisClusterConnection.getNativeConnection();
                     cacheManager = new JedisClusterCacheManager(jedisCluster, serializer);
@@ -152,23 +161,33 @@ public class AutoloadCacheManageConfiguration {
         @Bean
         @ConditionalOnMissingBean(ICacheManager.class)
         @ConditionalOnBean(LettuceConnectionFactory.class)
-        public ICacheManager autoloadCacheCacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer,
-                                                       LettuceConnectionFactory connectionFactory) {
+        public ICacheManager autoloadCacheCacheManager(
+                AutoloadCacheProperties config,
+                ISerializer<Object> serializer,
+                LettuceConnectionFactory connectionFactory) {
             return createRedisCacheManager(config, serializer, connectionFactory);
         }
 
-        private ICacheManager createRedisCacheManager(AutoloadCacheProperties config, ISerializer<Object> serializer, LettuceConnectionFactory connectionFactory) {
+        private ICacheManager createRedisCacheManager(
+                AutoloadCacheProperties config,
+                ISerializer<Object> serializer,
+                LettuceConnectionFactory connectionFactory) {
             RedisConnection redisConnection = null;
             try {
                 redisConnection = connectionFactory.getConnection();
                 AbstractRedisCacheManager cacheManager = null;
                 if (redisConnection instanceof LettuceClusterConnection) {
-                    LettuceClusterConnection lettuceClusterConnection = (LettuceClusterConnection) redisConnection;
+                    LettuceClusterConnection lettuceClusterConnection =
+                            (LettuceClusterConnection) redisConnection;
                     try {
-                        Field clusterClientField = LettuceClusterConnection.class.getDeclaredField("clusterClient");
+                        Field clusterClientField =
+                                LettuceClusterConnection.class.getDeclaredField("clusterClient");
                         clusterClientField.setAccessible(true);
-                        RedisClusterClient redisClusterClient = (RedisClusterClient) clusterClientField.get(lettuceClusterConnection);
-                        cacheManager = new LettuceRedisClusterCacheManager(redisClusterClient, serializer);
+                        RedisClusterClient redisClusterClient =
+                                (RedisClusterClient)
+                                        clusterClientField.get(lettuceClusterConnection);
+                        cacheManager =
+                                new LettuceRedisClusterCacheManager(redisClusterClient, serializer);
                     } catch (Exception e) {
                         log.error(e.getMessage(), e);
                     }
@@ -186,6 +205,4 @@ public class AutoloadCacheManageConfiguration {
             }
         }
     }
-
-
 }

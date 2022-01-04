@@ -1,104 +1,66 @@
 package com.jarvis.cache.to;
 
 import com.jarvis.cache.type.AutoLoadQueueSortType;
+
 import lombok.Data;
 
 import java.util.Map;
 
-/**
- * 缓存处理的相关 配置
- *
- *
- */
+/** 缓存处理的相关 配置 */
 @Data
 public class AutoLoadConfig {
 
-    /**
-     * 命名空间
-     */
+    /** 命名空间 */
     private String namespace;
 
-    /**
-     * 处理自动加载队列的线程数量
-     */
+    /** 处理自动加载队列的线程数量 */
     private Integer threadCnt = 10;
 
-    /**
-     * 自动加载队列中允许存放的最大容量
-     */
+    /** 自动加载队列中允许存放的最大容量 */
     private int maxElement = 20000;
 
-    /**
-     * 是否打印比较耗时的请求
-     */
+    /** 是否打印比较耗时的请求 */
     private boolean printSlowLog = true;
 
-    /**
-     * 当请求耗时超过此值时，记录目录（printSlowLog=true 时才有效），单位：毫秒
-     */
+    /** 当请求耗时超过此值时，记录目录（printSlowLog=true 时才有效），单位：毫秒 */
     private int slowLoadTime = 500;
 
-    /**
-     * 自动加载队列排序算法
-     */
+    /** 自动加载队列排序算法 */
     private AutoLoadQueueSortType sortType = AutoLoadQueueSortType.NONE;
 
-    /**
-     * 加载数据之前去缓存服务器中检查，数据是否快过期，如果应用程序部署的服务器数量比较少，设置为false,
-     * 如果部署的服务器比较多，可以考虑设置为true
-     */
+    /** 加载数据之前去缓存服务器中检查，数据是否快过期，如果应用程序部署的服务器数量比较少，设置为false, 如果部署的服务器比较多，可以考虑设置为true */
     private boolean checkFromCacheBeforeLoad = false;
 
-    /**
-     * 单个线程中执行自动加载的时间间隔
-     */
+    /** 单个线程中执行自动加载的时间间隔 */
     private int autoLoadPeriod = 50;
 
-    /**
-     *
-     */
+    /** */
     private int loadUseTimeForAutoLoad1 = 10;
 
-    /**
-     *
-     */
+    /** */
     private int loadUseTimeForAutoLoad2 = 200;
 
-    /**
-     * 异步刷新缓存线程池的 corePoolSize
-     */
+    /** 异步刷新缓存线程池的 corePoolSize */
     private int refreshThreadPoolSize = 2;
 
-    /**
-     * 异步刷新缓存线程池的 maximumPoolSize
-     */
+    /** 异步刷新缓存线程池的 maximumPoolSize */
     private int refreshThreadPoolMaxSize = 20;
 
-    /**
-     * 异步刷新缓存线程池的 keepAliveTime
-     */
+    /** 异步刷新缓存线程池的 keepAliveTime */
     private int refreshThreadPoolkeepAliveTime = 20;
 
-    /**
-     * 异步刷新缓存队列容量
-     */
+    /** 异步刷新缓存队列容量 */
     private int refreshQueueCapacity = 2000;
 
     private Map<String, String> functions;
 
-    /**
-     * 加载数据重试次数，默认值为1：
-     */
+    /** 加载数据重试次数，默认值为1： */
     private int loadDataTryCnt = 1;
 
-    /**
-     * Processing Map的初始大小
-     */
+    /** Processing Map的初始大小 */
     private int processingMapSize = 512;
 
-    /**
-     * 是否启用DataLoader对象池
-     */
+    /** 是否启用DataLoader对象池 */
     private boolean dataLoaderPooled = true;
 
     public String getNamespace() {
@@ -258,5 +220,4 @@ public class AutoLoadConfig {
             this.processingMapSize = processingMapSize;
         }
     }
-
 }

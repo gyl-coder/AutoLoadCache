@@ -1,27 +1,23 @@
 package com.jarvis.cache.demo.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.jarvis.cache.annotation.Cache;
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.mapper.UserMapper;
 
-/**  
- * TODO
- */
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/** TODO */
 @Component
-//@Transactional(readOnly = true)
+// @Transactional(readOnly = true)
 public class UserDAO {
 
-    @Autowired
-    private UserMapper userMapper;
-    
+    @Autowired private UserMapper userMapper;
+
     @Cache(expire = 600, key = "'user-list2-' + #hash(#args[0])")
     public List<UserDO> listByCondition(UserCondition condition) {
         List<Long> ids = userMapper.listIdsByCondition(condition);

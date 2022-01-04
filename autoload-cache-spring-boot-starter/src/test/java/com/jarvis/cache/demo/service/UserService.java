@@ -1,11 +1,9 @@
 package com.jarvis.cache.demo.service;
 
-import java.util.List;
-
-import com.jarvis.cache.annotation.Cache;
-import com.jarvis.cache.annotation.CacheDeleteTransactional;
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -28,7 +26,6 @@ public interface UserService {
     List<UserDO> testMagic(String name, String password, Long... ids);
 
     List<UserDO> testMagic(String name, String password, List<Long> ids);
-
 
     void testDeleteMagicForArg(String name, String password, Long... ids);
 

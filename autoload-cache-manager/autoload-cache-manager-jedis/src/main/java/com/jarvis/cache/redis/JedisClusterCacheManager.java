@@ -4,6 +4,7 @@ import com.jarvis.cache.MSetParam;
 import com.jarvis.cache.serializer.ISerializer;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
+
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.JedisCluster;
 
@@ -13,11 +14,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Redis缓存管理
- *
- *
- */
+/** Redis缓存管理 */
 @Slf4j
 public class JedisClusterCacheManager extends AbstractRedisCacheManager {
 
@@ -39,15 +36,14 @@ public class JedisClusterCacheManager extends AbstractRedisCacheManager {
 
         private final AbstractRedisCacheManager cacheManager;
 
-        public JedisClusterClient(JedisCluster jedisCluster, AbstractRedisCacheManager cacheManager) {
+        public JedisClusterClient(
+                JedisCluster jedisCluster, AbstractRedisCacheManager cacheManager) {
             this.jedisCluster = jedisCluster;
             this.cacheManager = cacheManager;
         }
 
         @Override
-        public void close() throws IOException {
-
-        }
+        public void close() throws IOException {}
 
         @Override
         public void set(byte[] key, byte[] value) {
@@ -66,13 +62,14 @@ public class JedisClusterCacheManager extends AbstractRedisCacheManager {
 
         @Override
         public void hset(byte[] key, byte[] field, byte[] value, int seconds) {
-            RetryableJedisClusterPipeline retryableJedisClusterPipeline = new RetryableJedisClusterPipeline(jedisCluster) {
-                @Override
-                public void execute(JedisClusterPipeline pipeline) {
-                    pipeline.hset(key, field, value);
-                    pipeline.expire(key, seconds);
-                }
-            };
+            RetryableJedisClusterPipeline retryableJedisClusterPipeline =
+                    new RetryableJedisClusterPipeline(jedisCluster) {
+                        @Override
+                        public void execute(JedisClusterPipeline pipeline) {
+                            pipeline.hset(key, field, value);
+                            pipeline.expire(key, seconds);
+                        }
+                    };
             try {
                 retryableJedisClusterPipeline.sync();
             } catch (Exception e) {
@@ -82,12 +79,13 @@ public class JedisClusterCacheManager extends AbstractRedisCacheManager {
 
         @Override
         public void mset(Collection<MSetParam> params) {
-            RetryableJedisClusterPipeline retryableJedisClusterPipeline = new RetryableJedisClusterPipeline(jedisCluster) {
-                @Override
-                public void execute(JedisClusterPipeline pipeline) throws Exception {
-                    JedisUtil.executeMSet(pipeline, cacheManager, params);
-                }
-            };
+            RetryableJedisClusterPipeline retryableJedisClusterPipeline =
+                    new RetryableJedisClusterPipeline(jedisCluster) {
+                        @Override
+                        public void execute(JedisClusterPipeline pipeline) throws Exception {
+                            JedisUtil.executeMSet(pipeline, cacheManager, params);
+                        }
+                    };
             try {
                 retryableJedisClusterPipeline.sync();
             } catch (Exception e) {
@@ -106,31 +104,33 @@ public class JedisClusterCacheManager extends AbstractRedisCacheManager {
         }
 
         @Override
-        public Map<CacheKeyTO, CacheWrapper<Object>> mget(Type returnType, Set<CacheKeyTO> keys) throws Exception {
-            RetryableJedisClusterPipeline retryableJedisClusterPipeline = new RetryableJedisClusterPipeline(jedisCluster) {
-                @Override
-                public void execute(JedisClusterPipeline pipeline) {
-                    JedisUtil.executeMGet(pipeline, keys);
-                }
-            };
-            return cacheManager.deserialize(keys, retryableJedisClusterPipeline.syncAndReturnAll(), returnType);
+        public Map<CacheKeyTO, CacheWrapper<Object>> mget(Type returnType, Set<CacheKeyTO> keys)
+                throws Exception {
+            RetryableJedisClusterPipeline retryableJedisClusterPipeline =
+                    new RetryableJedisClusterPipeline(jedisCluster) {
+                        @Override
+                        public void execute(JedisClusterPipeline pipeline) {
+                            JedisUtil.executeMGet(pipeline, keys);
+                        }
+                    };
+            return cacheManager.deserialize(
+                    keys, retryableJedisClusterPipeline.syncAndReturnAll(), returnType);
         }
 
         @Override
         public void delete(Set<CacheKeyTO> keys) {
-            RetryableJedisClusterPipeline retryableJedisClusterPipeline = new RetryableJedisClusterPipeline(jedisCluster) {
-                @Override
-                public void execute(JedisClusterPipeline pipeline) {
-                    JedisUtil.executeDelete(pipeline, keys);
-                }
-            };
+            RetryableJedisClusterPipeline retryableJedisClusterPipeline =
+                    new RetryableJedisClusterPipeline(jedisCluster) {
+                        @Override
+                        public void execute(JedisClusterPipeline pipeline) {
+                            JedisUtil.executeDelete(pipeline, keys);
+                        }
+                    };
             try {
                 retryableJedisClusterPipeline.sync();
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
         }
-
     }
-
 }

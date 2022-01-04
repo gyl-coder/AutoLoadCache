@@ -4,11 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 缓存Key
- *
- *
- */
+/** 缓存Key */
 @Data
 public final class CacheKeyTO implements Serializable {
 
@@ -16,9 +12,9 @@ public final class CacheKeyTO implements Serializable {
 
     private final String namespace;
 
-    private final String key;// 缓存Key
+    private final String key; // 缓存Key
 
-    private final String hfield;// 设置哈希表中的字段，如果设置此项，则用哈希表进行存储
+    private final String hfield; // 设置哈希表中的字段，如果设置此项，则用哈希表进行存储
 
     public CacheKeyTO(String namespace, String key, String hfield) {
         this.namespace = namespace;
@@ -41,5 +37,4 @@ public final class CacheKeyTO implements Serializable {
         key.append(":lock");
         return key.toString();
     }
-
 }

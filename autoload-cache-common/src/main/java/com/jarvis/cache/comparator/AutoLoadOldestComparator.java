@@ -6,10 +6,8 @@ import java.util.Comparator;
 
 /**
  * 排序算法：越接近过期时间，越耗时的排在最前,即： System.currentTimeMillis() -
- * autoLoadTO.getLastLoadTime()-autoLoadTO.getExpire()*1000 值越大，排在越前
- * autoLoadTO.getAverageUseTime() 值越大，排在越前
- *
- *
+ * autoLoadTO.getLastLoadTime()-autoLoadTO.getExpire()*1000 值越大，排在越前 autoLoadTO.getAverageUseTime()
+ * 值越大，排在越前
  */
 public class AutoLoadOldestComparator implements Comparator<AutoLoadTO> {
 
@@ -38,5 +36,4 @@ public class AutoLoadOldestComparator implements Comparator<AutoLoadTO> {
         }
         return 0;
     }
-
 }

@@ -4,6 +4,7 @@ import com.jarvis.cache.MSetParam;
 import com.jarvis.cache.serializer.ISerializer;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
+
 import io.lettuce.core.AbstractRedisAsyncCommands;
 import io.lettuce.core.cluster.RedisClusterClient;
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
@@ -22,14 +23,16 @@ public class LettuceRedisClusterCacheManager extends AbstractRedisCacheManager {
 
     private final RedisClusterClient redisClusterClient;
 
-    public LettuceRedisClusterCacheManager(RedisClusterClient redisClusterClient, ISerializer<Object> serializer) {
+    public LettuceRedisClusterCacheManager(
+            RedisClusterClient redisClusterClient, ISerializer<Object> serializer) {
         super(serializer);
         this.redisClusterClient = redisClusterClient;
     }
 
     @Override
     protected IRedis getRedis() {
-        StatefulRedisClusterConnection<byte[], byte[]> connection = redisClusterClient.connect(ByteArrayCodec.INSTANCE);
+        StatefulRedisClusterConnection<byte[], byte[]> connection =
+                redisClusterClient.connect(ByteArrayCodec.INSTANCE);
         return new LettuceRedisClusterClient(connection, this);
     }
 
@@ -39,7 +42,9 @@ public class LettuceRedisClusterCacheManager extends AbstractRedisCacheManager {
 
         private final AbstractRedisCacheManager cacheManager;
 
-        public LettuceRedisClusterClient(StatefulRedisClusterConnection<byte[], byte[]> connection, AbstractRedisCacheManager cacheManager) {
+        public LettuceRedisClusterClient(
+                StatefulRedisClusterConnection<byte[], byte[]> connection,
+                AbstractRedisCacheManager cacheManager) {
             this.connection = connection;
             this.cacheManager = cacheManager;
         }
@@ -80,7 +85,10 @@ public class LettuceRedisClusterCacheManager extends AbstractRedisCacheManager {
             this.connection.setAutoFlushCommands(false);
             RedisAdvancedClusterAsyncCommands<byte[], byte[]> asyncCommands = connection.async();
             try {
-                LettuceRedisUtil.executeMSet((AbstractRedisAsyncCommands<byte[], byte[]>) asyncCommands, cacheManager, params);
+                LettuceRedisUtil.executeMSet(
+                        (AbstractRedisAsyncCommands<byte[], byte[]>) asyncCommands,
+                        cacheManager,
+                        params);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             } finally {
@@ -111,7 +119,12 @@ public class LettuceRedisClusterCacheManager extends AbstractRedisCacheManager {
         @Override
         public Map<CacheKeyTO, CacheWrapper<Object>> mget(Type returnType, Set<CacheKeyTO> keys) {
             RedisAdvancedClusterAsyncCommands<byte[], byte[]> asyncCommands = connection.async();
-            return LettuceRedisUtil.executeMGet(connection, (AbstractRedisAsyncCommands<byte[], byte[]>) asyncCommands, cacheManager, returnType, keys);
+            return LettuceRedisUtil.executeMGet(
+                    connection,
+                    (AbstractRedisAsyncCommands<byte[], byte[]>) asyncCommands,
+                    cacheManager,
+                    returnType,
+                    keys);
         }
 
         @Override
@@ -132,7 +145,9 @@ public class LettuceRedisClusterCacheManager extends AbstractRedisCacheManager {
                     if (null == hfield || hfield.length() == 0) {
                         asyncCommands.del(KEY_SERIALIZER.serialize(cacheKey));
                     } else {
-                        asyncCommands.hdel(KEY_SERIALIZER.serialize(cacheKey), KEY_SERIALIZER.serialize(hfield));
+                        asyncCommands.hdel(
+                                KEY_SERIALIZER.serialize(cacheKey),
+                                KEY_SERIALIZER.serialize(hfield));
                     }
                 }
             } catch (Exception ex) {
@@ -141,7 +156,5 @@ public class LettuceRedisClusterCacheManager extends AbstractRedisCacheManager {
                 this.connection.flushCommands();
             }
         }
-
     }
-
 }

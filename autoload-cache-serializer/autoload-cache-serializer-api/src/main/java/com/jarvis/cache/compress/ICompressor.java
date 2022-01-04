@@ -2,9 +2,7 @@ package com.jarvis.cache.compress;
 
 import java.io.ByteArrayInputStream;
 
-/**
- *
- */
+/** */
 public interface ICompressor {
 
     /**

@@ -1,13 +1,5 @@
 package com.jarvis.cache.redis;
 
-import java.io.Closeable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Client;
@@ -20,13 +12,20 @@ import redis.clients.jedis.exceptions.JedisRedirectionException;
 import redis.clients.jedis.util.JedisClusterCRC16;
 import redis.clients.jedis.util.SafeEncoder;
 
+import java.io.Closeable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+
 /**
  * 在集群模式下提供批量操作的功能。由于集群模式存在节点的动态添加删除，且client不能实时感知，所以需要有重试功能
- * <p>
- * 该类非线程安全
- * <p>
  *
+ * <p>该类非线程安全
  *
+ * <p>
  */
 @Getter
 @Slf4j
@@ -34,13 +33,9 @@ public class JedisClusterPipeline extends PipelineBase implements Closeable {
 
     private final JedisClusterInfoCache clusterInfoCache;
 
-    /**
-     * 根据顺序存储每个命令对应的Client
-     */
+    /** 根据顺序存储每个命令对应的Client */
     private final Queue<Client> clients;
-    /**
-     * 用于缓存连接
-     */
+    /** 用于缓存连接 */
     private final Map<JedisPool, Jedis> jedisMap;
 
     public JedisClusterPipeline(JedisClusterInfoCache clusterInfoCache) {
@@ -49,9 +44,7 @@ public class JedisClusterPipeline extends PipelineBase implements Closeable {
         this.jedisMap = new HashMap<>(3);
     }
 
-    /**
-     * 同步读取所有数据. 与syncAndReturnAll()相比，sync()只是没有对数据做反序列化
-     */
+    /** 同步读取所有数据. 与syncAndReturnAll()相比，sync()只是没有对数据做反序列化 */
     protected void sync() {
         innerSync(null);
     }
@@ -98,9 +91,9 @@ public class JedisClusterPipeline extends PipelineBase implements Closeable {
 
     private void flushCachedData(Jedis jedis) {
         try {
-            //FIXME 这个count怎么取值? 执行命令的个数??
+            // FIXME 这个count怎么取值? 执行命令的个数??
             jedis.getClient().getMany(jedisMap.size());
-            //jedis.getClient().getAll();
+            // jedis.getClient().getAll();
         } catch (RuntimeException ex) {
             // 其中一个client出问题，后面出问题的几率较大
         }

@@ -1,5 +1,10 @@
 package com.jarvis.cache.serializer;
 
+import com.jarvis.cache.reflect.generics.ParameterizedTypeImpl;
+import com.jarvis.cache.to.CacheWrapper;
+
+import com.jarvis.lib.util.BeanUtil;
+import com.jarvis.lib.util.StringUtil;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -8,10 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.jarvis.cache.reflect.generics.ParameterizedTypeImpl;
-import com.jarvis.cache.to.CacheWrapper;
-import com.jarvis.lib.util.BeanUtil;
-import com.jarvis.lib.util.StringUtil;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -25,9 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- *
- */
+/** */
 public class JacksonJsonSerializer implements ISerializer<Object> {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -36,7 +35,9 @@ public class JacksonJsonSerializer implements ISerializer<Object> {
         // mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         MAPPER.registerModule(
-                new SimpleModule().addSerializer(new JacksonJsonSerializer.NullValueSerializer((String) null)));
+                new SimpleModule()
+                        .addSerializer(
+                                new JacksonJsonSerializer.NullValueSerializer((String) null)));
         MAPPER.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
     }
 
@@ -47,8 +48,7 @@ public class JacksonJsonSerializer implements ISerializer<Object> {
         private final String classIdentifier;
 
         /**
-         * @param classIdentifier can be {@literal null} and will be defaulted
-         *                        to {@code @class}.
+         * @param classIdentifier can be {@literal null} and will be defaulted to {@code @class}.
          */
         NullValueSerializer(String classIdentifier) {
 
@@ -64,7 +64,8 @@ public class JacksonJsonSerializer implements ISerializer<Object> {
          * com.fasterxml.jackson.databind.SerializerProvider)
          */
         @Override
-        public void serialize(NullValue value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+        public void serialize(NullValue value, JsonGenerator jgen, SerializerProvider provider)
+                throws IOException {
 
             jgen.writeStartObject();
             jgen.writeStringField(classIdentifier, NullValue.class.getName());
@@ -85,9 +86,11 @@ public class JacksonJsonSerializer implements ISerializer<Object> {
         if (null == bytes || bytes.length == 0) {
             return null;
         }
-        Type[] agsType = new Type[]{returnType};
-        JavaType javaType = MAPPER.getTypeFactory()
-                .constructType(ParameterizedTypeImpl.make(CacheWrapper.class, agsType, null));
+        Type[] agsType = new Type[] {returnType};
+        JavaType javaType =
+                MAPPER.getTypeFactory()
+                        .constructType(
+                                ParameterizedTypeImpl.make(CacheWrapper.class, agsType, null));
         return MAPPER.readValue(bytes, javaType);
     }
 
@@ -98,8 +101,11 @@ public class JacksonJsonSerializer implements ISerializer<Object> {
             return null;
         }
         Class<?> clazz = obj.getClass();
-        if (BeanUtil.isPrimitive(obj) || clazz.isEnum() || obj instanceof Class || clazz.isAnnotation()
-                || clazz.isSynthetic()) {// 常见不会被修改的数据类型
+        if (BeanUtil.isPrimitive(obj)
+                || clazz.isEnum()
+                || obj instanceof Class
+                || clazz.isAnnotation()
+                || clazz.isSynthetic()) { // 常见不会被修改的数据类型
             return obj;
         }
         if (obj instanceof Date) {
@@ -118,8 +124,10 @@ public class JacksonJsonSerializer implements ISerializer<Object> {
         if (clazz.isArray()) {
             Object[] arr = (Object[]) obj;
 
-            Object[] res = ((Object) clazz == (Object) Object[].class) ? (Object[]) new Object[arr.length]
-                    : (Object[]) Array.newInstance(clazz.getComponentType(), arr.length);
+            Object[] res =
+                    ((Object) clazz == (Object) Object[].class)
+                            ? (Object[]) new Object[arr.length]
+                            : (Object[]) Array.newInstance(clazz.getComponentType(), arr.length);
             for (int i = 0; i < arr.length; i++) {
                 res[i] = deepClone(arr[i], null);
             }
@@ -165,12 +173,19 @@ public class JacksonJsonSerializer implements ISerializer<Object> {
         }
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         if (args.length != genericParameterTypes.length) {
-            throw new Exception("the length of " + method.getDeclaringClass().getName() + "." + method.getName()
-                    + " must " + genericParameterTypes.length);
+            throw new Exception(
+                    "the length of "
+                            + method.getDeclaringClass().getName()
+                            + "."
+                            + method.getName()
+                            + " must "
+                            + genericParameterTypes.length);
         }
         Class<?> clazz = args.getClass();
-        Object[] res = ((Object) clazz == (Object) Object[].class) ? (Object[]) new Object[args.length]
-                : (Object[]) Array.newInstance(clazz.getComponentType(), args.length);
+        Object[] res =
+                ((Object) clazz == (Object) Object[].class)
+                        ? (Object[]) new Object[args.length]
+                        : (Object[]) Array.newInstance(clazz.getComponentType(), args.length);
         int len = genericParameterTypes.length;
         for (int i = 0; i < len; i++) {
             Type genericParameterType = genericParameterTypes[i];
@@ -185,5 +200,4 @@ public class JacksonJsonSerializer implements ISerializer<Object> {
         }
         return res;
     }
-
 }

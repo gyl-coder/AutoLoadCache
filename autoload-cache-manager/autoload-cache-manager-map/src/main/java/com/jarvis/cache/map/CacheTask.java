@@ -3,6 +3,7 @@ package com.jarvis.cache.map;
 import com.jarvis.cache.serializer.HessianSerializer;
 import com.jarvis.cache.serializer.ISerializer;
 import com.jarvis.cache.to.CacheWrapper;
+
 import com.jarvis.lib.util.OsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +20,12 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- *
- */
+/** */
 public class CacheTask implements Runnable, CacheChangeListener {
 
     private static final Logger logger = LoggerFactory.getLogger(CacheTask.class);
 
-    /**
-     * 缓存被修改的个数
-     */
+    /** 缓存被修改的个数 */
     private AtomicInteger cacheChanged = new AtomicInteger(0);
 
     private MapCacheManager cacheManager;
@@ -48,7 +45,6 @@ public class CacheTask implements Runnable, CacheChangeListener {
             loadCache();
             this.running = true;
         }
-
     }
 
     public void destroy() {
@@ -91,16 +87,15 @@ public class CacheTask implements Runnable, CacheChangeListener {
         return saveFile;
     }
 
-    private ISerializer<Object> getPersistSerializer() {// 因为只有HessianSerializer才支持SoftReference序列化，所以只能使用HessianSerializer
+    private ISerializer<Object>
+            getPersistSerializer() { // 因为只有HessianSerializer才支持SoftReference序列化，所以只能使用HessianSerializer
         if (null == persistSerializer) {
             persistSerializer = new HessianSerializer();
         }
         return persistSerializer;
     }
 
-    /**
-     * 从磁盘中加载之前保存的缓存数据，避免刚启动时，因为没有缓存，而且造成压力过大
-     */
+    /** 从磁盘中加载之前保存的缓存数据，避免刚启动时，因为没有缓存，而且造成压力过大 */
     @SuppressWarnings("unchecked")
     public void loadCache() {
         if (!cacheManager.isNeedPersist()) {
@@ -139,7 +134,6 @@ public class CacheTask implements Runnable, CacheChangeListener {
                 }
             }
         }
-
     }
 
     private void persistCache(boolean force) {
@@ -169,7 +163,6 @@ public class CacheTask implements Runnable, CacheChangeListener {
                 }
             }
         }
-
     }
 
     @Override
@@ -189,9 +182,7 @@ public class CacheTask implements Runnable, CacheChangeListener {
         }
     }
 
-    /**
-     * 清除过期缓存
-     */
+    /** 清除过期缓存 */
     private void cleanCache() {
         Iterator<Entry<String, Object>> iterator = cacheManager.getCache().entrySet().iterator();
         int cacheChanged = 0;
@@ -202,7 +193,7 @@ public class CacheTask implements Runnable, CacheChangeListener {
             if (i == 2000) {
                 i = 0;
                 try {
-                    Thread.sleep(0);// 触发操作系统立刻重新进行一次CPU竞争, 让其它线程获得CPU控制权的权力。
+                    Thread.sleep(0); // 触发操作系统立刻重新进行一次CPU竞争, 让其它线程获得CPU控制权的权力。
                 } catch (InterruptedException e) {
                     logger.error(e.getMessage(), e);
                 }
@@ -218,7 +209,8 @@ public class CacheTask implements Runnable, CacheChangeListener {
         int cacheChanged = 0;
         Object value = iterator.next().getValue();
         if (value instanceof SoftReference) {
-            SoftReference<CacheWrapper<Object>> reference = (SoftReference<CacheWrapper<Object>>) value;
+            SoftReference<CacheWrapper<Object>> reference =
+                    (SoftReference<CacheWrapper<Object>>) value;
             if (null != reference && null != reference.get()) {
                 CacheWrapper<Object> tmp = reference.get();
                 if (tmp.isExpired()) {
@@ -235,7 +227,8 @@ public class CacheTask implements Runnable, CacheChangeListener {
             while (iterator2.hasNext()) {
                 Object tmpObj = iterator2.next().getValue();
                 if (tmpObj instanceof SoftReference) {
-                    SoftReference<CacheWrapper<Object>> reference = (SoftReference<CacheWrapper<Object>>) tmpObj;
+                    SoftReference<CacheWrapper<Object>> reference =
+                            (SoftReference<CacheWrapper<Object>>) tmpObj;
                     if (null != reference && null != reference.get()) {
                         CacheWrapper<Object> tmp = reference.get();
                         if (tmp.isExpired()) {
@@ -246,7 +239,7 @@ public class CacheTask implements Runnable, CacheChangeListener {
                         iterator2.remove();
                         cacheChanged++;
                     }
-                } else if (tmpObj instanceof CacheWrapper) {// 兼容老版本
+                } else if (tmpObj instanceof CacheWrapper) { // 兼容老版本
                     CacheWrapper<Object> tmp = (CacheWrapper<Object>) tmpObj;
                     if (tmp.isExpired()) {
                         iterator2.remove();
@@ -276,5 +269,4 @@ public class CacheTask implements Runnable, CacheChangeListener {
     public void cacheChange(int cnt) {
         cacheChanged.addAndGet(cnt);
     }
-
 }

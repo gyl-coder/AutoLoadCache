@@ -2,9 +2,7 @@ package com.jarvis.cache.to;
 
 import lombok.Data;
 
-/**
- *
- */
+/** */
 @Data
 public class ProcessingTO {
 

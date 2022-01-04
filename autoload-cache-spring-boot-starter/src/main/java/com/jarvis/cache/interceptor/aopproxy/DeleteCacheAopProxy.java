@@ -1,14 +1,12 @@
 package com.jarvis.cache.interceptor.aopproxy;
 
-import java.lang.reflect.Method;
+import com.jarvis.cache.aop.DeleteCacheAopProxyChain;
 
 import org.aopalliance.intercept.MethodInvocation;
 
-import com.jarvis.cache.aop.DeleteCacheAopProxyChain;
+import java.lang.reflect.Method;
 
-/**
- *
- */
+/** */
 public class DeleteCacheAopProxy implements DeleteCacheAopProxyChain {
 
     private final MethodInvocation invocation;
@@ -36,5 +34,4 @@ public class DeleteCacheAopProxy implements DeleteCacheAopProxyChain {
         }
         return method;
     }
-
 }

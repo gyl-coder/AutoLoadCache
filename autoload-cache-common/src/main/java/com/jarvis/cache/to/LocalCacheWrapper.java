@@ -1,25 +1,15 @@
 package com.jarvis.cache.to;
 
-/**
- * 本地缓存
- *
- *
- */
+/** 本地缓存 */
 public class LocalCacheWrapper<T> extends CacheWrapper<T> {
 
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = -8194389703805635133L;
 
-    /**
-     * 远程缓存最后加载时间
-     */
+    /** 远程缓存最后加载时间 */
     private long remoteLastLoadTime;
 
-    /**
-     * 远程缓存的缓存时长
-     */
+    /** 远程缓存的缓存时长 */
     private int remoteExpire;
 
     public long getRemoteLastLoadTime() {
@@ -37,5 +27,4 @@ public class LocalCacheWrapper<T> extends CacheWrapper<T> {
     public void setRemoteExpire(int remoteExpire) {
         this.remoteExpire = remoteExpire;
     }
-
 }

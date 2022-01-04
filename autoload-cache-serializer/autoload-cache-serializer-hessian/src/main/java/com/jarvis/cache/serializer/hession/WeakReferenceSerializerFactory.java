@@ -7,9 +7,7 @@ import com.caucho.hessian.io.Serializer;
 
 import java.lang.ref.WeakReference;
 
-/**
- *
- */
+/** */
 public class WeakReferenceSerializerFactory extends AbstractSerializerFactory {
 
     private final WeakReferenceSerializer beanSerializer = new WeakReferenceSerializer();
@@ -17,7 +15,8 @@ public class WeakReferenceSerializerFactory extends AbstractSerializerFactory {
     private final WeakReferenceDeserializer beanDeserializer = new WeakReferenceDeserializer();
 
     @Override
-    public Serializer getSerializer(@SuppressWarnings("rawtypes") Class cl) throws HessianProtocolException {
+    public Serializer getSerializer(@SuppressWarnings("rawtypes") Class cl)
+            throws HessianProtocolException {
         if (WeakReference.class.isAssignableFrom(cl)) {
             return beanSerializer;
         }
@@ -25,11 +24,11 @@ public class WeakReferenceSerializerFactory extends AbstractSerializerFactory {
     }
 
     @Override
-    public Deserializer getDeserializer(@SuppressWarnings("rawtypes") Class cl) throws HessianProtocolException {
+    public Deserializer getDeserializer(@SuppressWarnings("rawtypes") Class cl)
+            throws HessianProtocolException {
         if (WeakReference.class.isAssignableFrom(cl)) {
             return beanDeserializer;
         }
         return null;
     }
-
 }

@@ -4,33 +4,22 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 对缓存数据进行封装
- *
- *
- */
+/** 对缓存数据进行封装 */
 @Data
 public class CacheWrapper<T> implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 缓存数据
-     */
+    /** 缓存数据 */
     private T cacheObject;
 
-    /**
-     * 最后加载时间
-     */
+    /** 最后加载时间 */
     private long lastLoadTime;
 
-    /**
-     * 缓存时长
-     */
+    /** 缓存时长 */
     private int expire;
 
-    public CacheWrapper() {
-    }
+    public CacheWrapper() {}
 
     public CacheWrapper(T cacheObject, int expire) {
         this.cacheObject = cacheObject;
@@ -63,5 +52,4 @@ public class CacheWrapper<T> implements Serializable, Cloneable {
         tmp.setCacheObject(this.cacheObject);
         return tmp;
     }
-
 }

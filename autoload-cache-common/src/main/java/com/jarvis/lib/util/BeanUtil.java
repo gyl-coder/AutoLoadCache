@@ -14,13 +14,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- *
- */
+/** */
 public class BeanUtil {
 
     @SuppressWarnings("rawtypes")
-    private static final ConcurrentHashMap<Class, Field[]> FIELDS_CAHCE = new ConcurrentHashMap<Class, Field[]>();
+    private static final ConcurrentHashMap<Class, Field[]> FIELDS_CAHCE =
+            new ConcurrentHashMap<Class, Field[]>();
 
     /**
      * 是否为基础数据类型
@@ -29,10 +28,19 @@ public class BeanUtil {
      * @return boolean true or false
      */
     public static boolean isPrimitive(Object obj) {
-        boolean rv = obj.getClass().isPrimitive() || obj instanceof String || obj instanceof Integer
-                || obj instanceof Long || obj instanceof Byte || obj instanceof Character || obj instanceof Boolean
-                || obj instanceof Short || obj instanceof Float || obj instanceof Double || obj instanceof BigDecimal
-                || obj instanceof BigInteger;
+        boolean rv =
+                obj.getClass().isPrimitive()
+                        || obj instanceof String
+                        || obj instanceof Integer
+                        || obj instanceof Long
+                        || obj instanceof Byte
+                        || obj instanceof Character
+                        || obj instanceof Boolean
+                        || obj instanceof Short
+                        || obj instanceof Float
+                        || obj instanceof Double
+                        || obj instanceof BigDecimal
+                        || obj instanceof BigInteger;
         return rv;
     }
 
@@ -130,7 +138,6 @@ public class BeanUtil {
                     e.printStackTrace();
                 }
                 r += ",";
-
             }
             String comma = ",";
             if (r.endsWith(comma)) {
@@ -141,5 +148,4 @@ public class BeanUtil {
         } while (cl != null);
         return r;
     }
-
 }

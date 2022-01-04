@@ -1,10 +1,11 @@
 package com.jarvis.cache.serializer;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jarvis.cache.reflect.generics.ParameterizedTypeImpl;
 import com.jarvis.cache.to.CacheWrapper;
+
 import com.jarvis.lib.util.BeanUtil;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import java.lang.reflect.Array;
@@ -18,11 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * 基于msgpack 和 Jackson进行处理
- *
- *
- */
+/** 基于msgpack 和 Jackson进行处理 */
 public class JacksonMsgpackSerializer implements ISerializer<Object> {
 
     private static final ObjectMapper MAPPER = new ObjectMapper(new MessagePackFactory());
@@ -40,9 +37,11 @@ public class JacksonMsgpackSerializer implements ISerializer<Object> {
         if (null == bytes || bytes.length == 0) {
             return null;
         }
-        Type[] agsType = new Type[]{returnType};
-        JavaType javaType = MAPPER.getTypeFactory()
-                .constructType(ParameterizedTypeImpl.make(CacheWrapper.class, agsType, null));
+        Type[] agsType = new Type[] {returnType};
+        JavaType javaType =
+                MAPPER.getTypeFactory()
+                        .constructType(
+                                ParameterizedTypeImpl.make(CacheWrapper.class, agsType, null));
         return MAPPER.readValue(bytes, javaType);
     }
 
@@ -53,8 +52,11 @@ public class JacksonMsgpackSerializer implements ISerializer<Object> {
             return null;
         }
         Class<?> clazz = obj.getClass();
-        if (BeanUtil.isPrimitive(obj) || clazz.isEnum() || obj instanceof Class || clazz.isAnnotation()
-                || clazz.isSynthetic()) {// 常见不会被修改的数据类型
+        if (BeanUtil.isPrimitive(obj)
+                || clazz.isEnum()
+                || obj instanceof Class
+                || clazz.isAnnotation()
+                || clazz.isSynthetic()) { // 常见不会被修改的数据类型
             return obj;
         }
         if (obj instanceof Date) {
@@ -73,8 +75,10 @@ public class JacksonMsgpackSerializer implements ISerializer<Object> {
         if (clazz.isArray()) {
             Object[] arr = (Object[]) obj;
 
-            Object[] res = ((Object) clazz == (Object) Object[].class) ? (Object[]) new Object[arr.length]
-                    : (Object[]) Array.newInstance(clazz.getComponentType(), arr.length);
+            Object[] res =
+                    ((Object) clazz == (Object) Object[].class)
+                            ? (Object[]) new Object[arr.length]
+                            : (Object[]) Array.newInstance(clazz.getComponentType(), arr.length);
             for (int i = 0; i < arr.length; i++) {
                 res[i] = deepClone(arr[i], null);
             }
@@ -120,12 +124,19 @@ public class JacksonMsgpackSerializer implements ISerializer<Object> {
         }
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         if (args.length != genericParameterTypes.length) {
-            throw new Exception("the length of " + method.getDeclaringClass().getName() + "." + method.getName()
-                    + " must " + genericParameterTypes.length);
+            throw new Exception(
+                    "the length of "
+                            + method.getDeclaringClass().getName()
+                            + "."
+                            + method.getName()
+                            + " must "
+                            + genericParameterTypes.length);
         }
         Class<?> clazz = args.getClass();
-        Object[] res = ((Object) clazz == (Object) Object[].class) ? (Object[]) new Object[args.length]
-                : (Object[]) Array.newInstance(clazz.getComponentType(), args.length);
+        Object[] res =
+                ((Object) clazz == (Object) Object[].class)
+                        ? (Object[]) new Object[args.length]
+                        : (Object[]) Array.newInstance(clazz.getComponentType(), args.length);
         int len = genericParameterTypes.length;
         for (int i = 0; i < len; i++) {
             Type genericParameterType = genericParameterTypes[i];
@@ -140,5 +151,4 @@ public class JacksonMsgpackSerializer implements ISerializer<Object> {
         }
         return res;
     }
-
 }

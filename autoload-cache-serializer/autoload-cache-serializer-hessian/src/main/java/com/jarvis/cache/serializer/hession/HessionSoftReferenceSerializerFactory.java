@@ -7,9 +7,7 @@ import com.caucho.hessian.io.Serializer;
 
 import java.lang.ref.SoftReference;
 
-/**
- *
- */
+/** */
 public class HessionSoftReferenceSerializerFactory extends AbstractSerializerFactory {
 
     private final SoftReferenceSerializer beanSerializer = new SoftReferenceSerializer();
@@ -17,7 +15,8 @@ public class HessionSoftReferenceSerializerFactory extends AbstractSerializerFac
     private final SoftReferenceDeserializer beanDeserializer = new SoftReferenceDeserializer();
 
     @Override
-    public Serializer getSerializer(@SuppressWarnings("rawtypes") Class cl) throws HessianProtocolException {
+    public Serializer getSerializer(@SuppressWarnings("rawtypes") Class cl)
+            throws HessianProtocolException {
         if (SoftReference.class.isAssignableFrom(cl)) {
             return beanSerializer;
         }
@@ -25,11 +24,11 @@ public class HessionSoftReferenceSerializerFactory extends AbstractSerializerFac
     }
 
     @Override
-    public Deserializer getDeserializer(@SuppressWarnings("rawtypes") Class cl) throws HessianProtocolException {
+    public Deserializer getDeserializer(@SuppressWarnings("rawtypes") Class cl)
+            throws HessianProtocolException {
         if (SoftReference.class.isAssignableFrom(cl)) {
             return beanDeserializer;
         }
         return null;
     }
-
 }

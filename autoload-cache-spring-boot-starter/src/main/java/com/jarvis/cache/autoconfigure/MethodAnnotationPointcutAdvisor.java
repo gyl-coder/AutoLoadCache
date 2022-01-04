@@ -1,17 +1,13 @@
 package com.jarvis.cache.autoconfigure;
 
-import java.lang.annotation.Annotation;
-
 import org.aopalliance.aop.Advice;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 
-/**
- * PointcutAdvisor
- * 
- *
- */
+import java.lang.annotation.Annotation;
+
+/** PointcutAdvisor */
 public class MethodAnnotationPointcutAdvisor extends AbstractPointcutAdvisor {
 
     private static final long serialVersionUID = -7431399745989513294L;
@@ -20,7 +16,8 @@ public class MethodAnnotationPointcutAdvisor extends AbstractPointcutAdvisor {
 
     private final Advice advice;
 
-    public MethodAnnotationPointcutAdvisor(Class<? extends Annotation> methodAnnotationType, Advice advice) {
+    public MethodAnnotationPointcutAdvisor(
+            Class<? extends Annotation> methodAnnotationType, Advice advice) {
         this.pointcut = new AnnotationMatchingPointcut(null, methodAnnotationType);
         this.advice = advice;
     }
@@ -34,5 +31,4 @@ public class MethodAnnotationPointcutAdvisor extends AbstractPointcutAdvisor {
     public Advice getAdvice() {
         return this.advice;
     }
-
 }

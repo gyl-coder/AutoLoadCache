@@ -8,9 +8,7 @@ import com.caucho.hessian.io.Serializer;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
-/**
- *
- */
+/** */
 public class WeakReferenceSerializer extends AbstractSerializer implements ObjectSerializer {
 
     @Override

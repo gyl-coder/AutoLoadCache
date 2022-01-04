@@ -2,11 +2,10 @@ package com.jarvis.cache;
 
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
+
 import lombok.Data;
 
-/**
- *
- */
+/** */
 @Data
 public class MSetParam {
 

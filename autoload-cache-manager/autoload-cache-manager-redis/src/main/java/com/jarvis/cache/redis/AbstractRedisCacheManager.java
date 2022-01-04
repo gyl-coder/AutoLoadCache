@@ -7,6 +7,7 @@ import com.jarvis.cache.serializer.ISerializer;
 import com.jarvis.cache.serializer.StringSerializer;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,18 +15,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 
-/**
- *
- */
+/** */
 @Getter
 @Slf4j
 public abstract class AbstractRedisCacheManager implements ICacheManager {
 
     public static final StringSerializer KEY_SERIALIZER = new StringSerializer();
 
-    /**
-     * Hash的缓存时长：等于0时永久缓存；大于0时，主要是为了防止一些已经不用的缓存占用内存;hashExpire小于0时，则使用@Cache中设置的expire值（默认值为-1）。
-     */
+    /** Hash的缓存时长：等于0时永久缓存；大于0时，主要是为了防止一些已经不用的缓存占用内存;hashExpire小于0时，则使用@Cache中设置的expire值（默认值为-1）。 */
     protected int hashExpire = -1;
 
     protected final ISerializer<Object> serializer;
@@ -37,7 +34,9 @@ public abstract class AbstractRedisCacheManager implements ICacheManager {
     protected abstract IRedis getRedis();
 
     @Override
-    public void setCache(final CacheKeyTO cacheKeyTO, final CacheWrapper<Object> result, final Method method) throws CacheCenterConnectionException {
+    public void setCache(
+            final CacheKeyTO cacheKeyTO, final CacheWrapper<Object> result, final Method method)
+            throws CacheCenterConnectionException {
         if (null == cacheKeyTO) {
             return;
         }
@@ -70,7 +69,6 @@ public abstract class AbstractRedisCacheManager implements ICacheManager {
         }
     }
 
-
     @Override
     public void mset(final Method method, final Collection<MSetParam> params) {
         if (null == params || params.isEmpty()) {
@@ -85,7 +83,8 @@ public abstract class AbstractRedisCacheManager implements ICacheManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public CacheWrapper<Object> get(final CacheKeyTO cacheKeyTO, final Method method) throws CacheCenterConnectionException {
+    public CacheWrapper<Object> get(final CacheKeyTO cacheKeyTO, final Method method)
+            throws CacheCenterConnectionException {
         if (null == cacheKeyTO) {
             return null;
         }
@@ -102,7 +101,10 @@ public abstract class AbstractRedisCacheManager implements ICacheManager {
             if (null == hfield || hfield.isEmpty()) {
                 val = redis.get(KEY_SERIALIZER.serialize(cacheKey));
             } else {
-                val = redis.hget(KEY_SERIALIZER.serialize(cacheKey), KEY_SERIALIZER.serialize(hfield));
+                val =
+                        redis.hget(
+                                KEY_SERIALIZER.serialize(cacheKey),
+                                KEY_SERIALIZER.serialize(hfield));
             }
             if (null != method) {
                 returnType = method.getGenericReturnType();
@@ -115,7 +117,8 @@ public abstract class AbstractRedisCacheManager implements ICacheManager {
     }
 
     @Override
-    public Map<CacheKeyTO, CacheWrapper<Object>> mget(final Method method, final Type returnType, final Set<CacheKeyTO> keys) {
+    public Map<CacheKeyTO, CacheWrapper<Object>> mget(
+            final Method method, final Type returnType, final Set<CacheKeyTO> keys) {
         if (null == keys || keys.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -127,7 +130,8 @@ public abstract class AbstractRedisCacheManager implements ICacheManager {
         return null;
     }
 
-    public Map<CacheKeyTO, CacheWrapper<Object>> deserialize(Set<CacheKeyTO> keys, Collection<Object> values, Type returnType) throws Exception {
+    public Map<CacheKeyTO, CacheWrapper<Object>> deserialize(
+            Set<CacheKeyTO> keys, Collection<Object> values, Type returnType) throws Exception {
         if (null == values || values.isEmpty()) {
             return Collections.emptyMap();
         }

@@ -7,6 +7,7 @@ import com.jarvis.cache.exception.CacheCenterConnectionException;
 import com.jarvis.cache.to.AutoLoadConfig;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +17,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 使用ConcurrentHashMap管理缓存
- *
- *
- */
+/** 使用ConcurrentHashMap管理缓存 */
 public class MapCacheManager implements ICacheManager {
 
     private static final Logger logger = LoggerFactory.getLogger(MapCacheManager.class);
@@ -33,38 +30,26 @@ public class MapCacheManager implements ICacheManager {
 
     private final AutoLoadConfig config;
 
-    /**
-     * 允许不持久化变更数(当缓存变更数量超过此值才做持久化操作)
-     */
+    /** 允许不持久化变更数(当缓存变更数量超过此值才做持久化操作) */
     private int unpersistMaxSize = 0;
 
     private Thread thread = null;
 
     private CacheTask cacheTask = null;
 
-    /**
-     * 缓存持久化文件
-     */
+    /** 缓存持久化文件 */
     private String persistFile;
 
-    /**
-     * 是否在持久化:为true时，允许持久化，false，不允许持久化
-     */
+    /** 是否在持久化:为true时，允许持久化，false，不允许持久化 */
     private boolean needPersist = true;
 
-    /**
-     * 从缓存中取数据时，是否克隆：true时，是克隆缓存值，可以避免外界修改缓存值；false，不克隆缓存值，缓存中的数据可能被外界修改，但效率比较高。
-     */
+    /** 从缓存中取数据时，是否克隆：true时，是克隆缓存值，可以避免外界修改缓存值；false，不克隆缓存值，缓存中的数据可能被外界修改，但效率比较高。 */
     private boolean copyValueOnGet = false;
 
-    /**
-     * 往缓存中写数据时，是否把克隆后的值放入缓存：true时，是拷贝缓存值，可以避免外界修改缓存值；false，不拷贝缓存值，缓存中的数据可能被外界修改，但效率比较高。
-     */
+    /** 往缓存中写数据时，是否把克隆后的值放入缓存：true时，是拷贝缓存值，可以避免外界修改缓存值；false，不拷贝缓存值，缓存中的数据可能被外界修改，但效率比较高。 */
     private boolean copyValueOnSet = false;
 
-    /**
-     * 清除和持久化的时间间隔,1Minutes
-     */
+    /** 清除和持久化的时间间隔,1Minutes */
     private int clearAndPersistPeriod = 60 * 1000;
 
     public MapCacheManager(AutoLoadConfig config, ICloner cloner) {
@@ -97,7 +82,9 @@ public class MapCacheManager implements ICacheManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setCache(final CacheKeyTO cacheKeyTO, final CacheWrapper<Object> result, final Method method) throws CacheCenterConnectionException {
+    public void setCache(
+            final CacheKeyTO cacheKeyTO, final CacheWrapper<Object> result, final Method method)
+            throws CacheCenterConnectionException {
         if (null == cacheKeyTO) {
             return;
         }
@@ -119,7 +106,8 @@ public class MapCacheManager implements ICacheManager {
         } else {
             value = result;
         }
-        SoftReference<CacheWrapper<Object>> reference = new SoftReference<CacheWrapper<Object>>(value);
+        SoftReference<CacheWrapper<Object>> reference =
+                new SoftReference<CacheWrapper<Object>>(value);
         String hfield = cacheKeyTO.getHfield();
         if (null == hfield || hfield.isEmpty()) {
             cache.put(cacheKey, reference);
@@ -129,8 +117,9 @@ public class MapCacheManager implements ICacheManager {
             if (null == tmpObj) {
                 hash = new ConcurrentHashMap<>(16);
                 ConcurrentHashMap<String, SoftReference<CacheWrapper<Object>>> tempHash = null;
-                tempHash = (ConcurrentHashMap<String, SoftReference<CacheWrapper<Object>>>) cache.putIfAbsent(cacheKey,
-                        hash);
+                tempHash =
+                        (ConcurrentHashMap<String, SoftReference<CacheWrapper<Object>>>)
+                                cache.putIfAbsent(cacheKey, hash);
                 if (null != tempHash) {
                     hash = tempHash;
                 }
@@ -148,7 +137,8 @@ public class MapCacheManager implements ICacheManager {
     }
 
     @Override
-    public void mset(final Method method, final Collection<MSetParam> params) throws CacheCenterConnectionException {
+    public void mset(final Method method, final Collection<MSetParam> params)
+            throws CacheCenterConnectionException {
         if (null == params || params.isEmpty()) {
             return;
         }
@@ -179,22 +169,24 @@ public class MapCacheManager implements ICacheManager {
         CacheWrapper<Object> value = null;
         if (null == hfield || hfield.isEmpty()) {
             if (obj instanceof SoftReference) {
-                SoftReference<CacheWrapper<Object>> reference = (SoftReference<CacheWrapper<Object>>) obj;
+                SoftReference<CacheWrapper<Object>> reference =
+                        (SoftReference<CacheWrapper<Object>>) obj;
                 if (null != reference) {
                     value = reference.get();
                 }
-            } else if (obj instanceof CacheWrapper) {// 兼容老版本
+            } else if (obj instanceof CacheWrapper) { // 兼容老版本
                 value = (CacheWrapper<Object>) obj;
             }
         } else {
             ConcurrentHashMap<String, Object> hash = (ConcurrentHashMap<String, Object>) obj;
             Object tmp = hash.get(hfield);
             if (tmp instanceof SoftReference) {
-                SoftReference<CacheWrapper<Object>> reference = (SoftReference<CacheWrapper<Object>>) tmp;
+                SoftReference<CacheWrapper<Object>> reference =
+                        (SoftReference<CacheWrapper<Object>>) tmp;
                 if (null != reference) {
                     value = reference.get();
                 }
-            } else if (tmp instanceof CacheWrapper) {// 兼容老版本
+            } else if (tmp instanceof CacheWrapper) { // 兼容老版本
                 value = (CacheWrapper<Object>) tmp;
             }
         }
@@ -205,7 +197,8 @@ public class MapCacheManager implements ICacheManager {
             if (copyValueOnGet) {
                 try {
                     CacheWrapper<Object> res = (CacheWrapper<Object>) value.clone();
-                    res.setCacheObject(this.cloner.deepClone(value.getCacheObject(), method.getReturnType()));
+                    res.setCacheObject(
+                            this.cloner.deepClone(value.getCacheObject(), method.getReturnType()));
                     return res;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -216,7 +209,9 @@ public class MapCacheManager implements ICacheManager {
     }
 
     @Override
-    public Map<CacheKeyTO, CacheWrapper<Object>> mget(final Method method, final Type returnType, final Set<CacheKeyTO> keys) throws CacheCenterConnectionException {
+    public Map<CacheKeyTO, CacheWrapper<Object>> mget(
+            final Method method, final Type returnType, final Set<CacheKeyTO> keys)
+            throws CacheCenterConnectionException {
         if (null == keys || keys.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -258,14 +253,15 @@ public class MapCacheManager implements ICacheManager {
                 if (tmp instanceof CacheWrapper) {
                     this.changeListener.cacheChange();
                 } else if (tmp instanceof ConcurrentHashMap) {
-                    ConcurrentHashMap<String, CacheWrapper<Object>> hash = (ConcurrentHashMap<String, CacheWrapper<Object>>) tmp;
+                    ConcurrentHashMap<String, CacheWrapper<Object>> hash =
+                            (ConcurrentHashMap<String, CacheWrapper<Object>>) tmp;
                     if (hash.size() > 0) {
                         this.changeListener.cacheChange(hash.size());
                     }
                 }
             } else {
-                ConcurrentHashMap<String, CacheWrapper<Object>> hash = (ConcurrentHashMap<String, CacheWrapper<Object>>) cache
-                        .get(cacheKey);
+                ConcurrentHashMap<String, CacheWrapper<Object>> hash =
+                        (ConcurrentHashMap<String, CacheWrapper<Object>>) cache.get(cacheKey);
                 if (null != hash) {
                     tmp = hash.remove(hfield);
                     // 如果删除成功
@@ -334,5 +330,4 @@ public class MapCacheManager implements ICacheManager {
     public AutoLoadConfig getAutoLoadConfig() {
         return this.config;
     }
-
 }

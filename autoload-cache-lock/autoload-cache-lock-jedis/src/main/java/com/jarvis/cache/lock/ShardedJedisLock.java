@@ -5,9 +5,7 @@ import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 import redis.clients.jedis.params.SetParams;
 
-/**
- *
- */
+/** */
 public class ShardedJedisLock extends AbstractRedisLock {
 
     private ShardedJedisPool shardedJedisPool;
@@ -43,5 +41,4 @@ public class ShardedJedisLock extends AbstractRedisLock {
             returnResource(shardedJedis);
         }
     }
-
 }

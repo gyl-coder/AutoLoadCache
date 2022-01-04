@@ -6,11 +6,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 
-/**
- * 代码拷贝来自：sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
- *
- *
- */
+/** 代码拷贝来自：sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl */
 public class ParameterizedTypeImpl implements ParameterizedType {
 
     private Type[] actualTypeArguments;
@@ -40,7 +36,8 @@ public class ParameterizedTypeImpl implements ParameterizedType {
         // for(int i=0; i < this.actualTypeArguments.length; i++);
     }
 
-    public static ParameterizedTypeImpl make(Class<?> paramClass, Type[] paramArrayOfType, Type paramType) {
+    public static ParameterizedTypeImpl make(
+            Class<?> paramClass, Type[] paramArrayOfType, Type paramType) {
         return new ParameterizedTypeImpl(paramClass, paramArrayOfType, paramType);
     }
 
@@ -72,7 +69,9 @@ public class ParameterizedTypeImpl implements ParameterizedType {
 
             return (this.ownerType == null ? localType1 == null : this.ownerType.equals(localType1))
                     && (this.rawType == null ? localType2 == null : this.rawType.equals(localType2))
-                    && (Arrays.equals(this.actualTypeArguments, localParameterizedType.getActualTypeArguments()));
+                    && (Arrays.equals(
+                            this.actualTypeArguments,
+                            localParameterizedType.getActualTypeArguments()));
         }
 
         return false;
@@ -80,7 +79,8 @@ public class ParameterizedTypeImpl implements ParameterizedType {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(this.actualTypeArguments) ^ (this.ownerType == null ? 0 : this.ownerType.hashCode())
+        return Arrays.hashCode(this.actualTypeArguments)
+                ^ (this.ownerType == null ? 0 : this.ownerType.hashCode())
                 ^ (this.rawType == null ? 0 : this.rawType.hashCode());
     }
 
@@ -97,8 +97,13 @@ public class ParameterizedTypeImpl implements ParameterizedType {
             localStringBuilder.append(".");
 
             if ((this.ownerType instanceof ParameterizedTypeImpl)) {
-                localStringBuilder.append(this.rawType.getName()
-                        .replace(((ParameterizedTypeImpl) this.ownerType).rawType.getName() + "$", ""));
+                localStringBuilder.append(
+                        this.rawType
+                                .getName()
+                                .replace(
+                                        ((ParameterizedTypeImpl) this.ownerType).rawType.getName()
+                                                + "$",
+                                        ""));
             } else {
                 localStringBuilder.append(this.rawType.getName());
             }
@@ -127,5 +132,4 @@ public class ParameterizedTypeImpl implements ParameterizedType {
 
         return localStringBuilder.toString();
     }
-
 }

@@ -4,11 +4,7 @@ import com.jarvis.cache.to.AutoLoadTO;
 
 import java.util.Comparator;
 
-/**
- * 根据请求次数，倒序排序，请求次数越多，说明使用频率越高，造成并发的可能越大。
- *
- *
- */
+/** 根据请求次数，倒序排序，请求次数越多，说明使用频率越高，造成并发的可能越大。 */
 public class AutoLoadRequestTimesComparator implements Comparator<AutoLoadTO> {
 
     @Override
@@ -27,5 +23,4 @@ public class AutoLoadRequestTimesComparator implements Comparator<AutoLoadTO> {
         }
         return 0;
     }
-
 }

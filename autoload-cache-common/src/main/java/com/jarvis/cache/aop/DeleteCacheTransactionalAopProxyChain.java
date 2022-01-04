@@ -1,8 +1,6 @@
 package com.jarvis.cache.aop;
 
-/**
- *
- */
+/** */
 public interface DeleteCacheTransactionalAopProxyChain {
 
     /**

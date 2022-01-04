@@ -13,6 +13,7 @@
   <description>Use AOP and Annotation manage cache.</description>
   <url>https://github.com/qiujiayu/AutoLoadCache</url>
   <properties>
+    <project.encoding>UTF-8</project.encoding>
     <revision>7.2.0</revision>
     <java_source_version>1.8</java_source_version>
     <java_target_version>1.8</java_target_version>
@@ -184,6 +185,83 @@
   </dependencies>
   <build>
     <plugins>
+      <!-- formatter -->
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>2.4.2</version>
+        <executions>
+          <execution>
+            <id>spotless-check</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <java>
+            <googleJavaFormat>
+              <version>1.7</version>
+              <style>AOSP</style>
+            </googleJavaFormat>
+            <!-- \# refers to the static imports -->
+            <importOrder>
+              <order>com.jarvis.cache,*,javax,java,\#</order>
+            </importOrder>
+            <removeUnusedImports></removeUnusedImports>
+          </java>
+        </configuration>
+      </plugin>
+      <!-- maven check style-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.17</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <!-- Note: match version with docs/flinkDev/ide_setup.md -->
+            <version>8.14</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <suppressionsLocation>devops/tools/maven/suppressions.xml</suppressionsLocation>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <configLocation>devops/tools/maven/checkstyle.xml</configLocation>
+          <logViolationsToConsole>true</logViolationsToConsole>
+          <failOnViolation>true</failOnViolation>
+          <linkXRef>false</linkXRef>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+      <!-- pom文件排序 -->
+      <plugin>
+        <groupId>com.github.ekryd.sortpom</groupId>
+        <artifactId>sortpom-maven-plugin</artifactId>
+        <version>2.4.0</version>
+        <executions>
+          <execution>
+            <id>sort-pom</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>sort</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <nrOfIndentSpace>4</nrOfIndentSpace>
+          <keepBlankLines>true</keepBlankLines>
+          <sortProperties>true</sortProperties>
+          <encoding>${project.encoding}</encoding>
+        </configuration>
+      </plugin>
+      <!-- 编译工具 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>

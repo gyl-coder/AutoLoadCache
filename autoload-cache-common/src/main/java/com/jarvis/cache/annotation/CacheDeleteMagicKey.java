@@ -7,11 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * 通过分割参数或返回值生成批量删除缓存Key注解
- *
- *
- */
+/** 通过分割参数或返回值生成批量删除缓存Key注解 */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Inherited
@@ -41,12 +37,14 @@ public @interface CacheDeleteMagicKey {
 
     /**
      * 需要分割处理的参数索引，如果不需要分割，则将参数设置为-1
+     *
      * @return int
      */
     int iterableArgIndex();
 
     /**
      * 是否分割返回值
+     *
      * @return
      */
     boolean iterableReturnValue() default false;

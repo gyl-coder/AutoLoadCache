@@ -6,17 +6,12 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Simple String to byte[] (and back) serializer. Converts Strings into bytes
- * and vice-versa using the specified charset (by default UTF-8).
- * <p>
- * Useful when the interaction with the Redis happens mainly through Strings.
- * </p>
- * <p>
- * Does not perform any null conversion since empty strings are valid
- * keys/values.
- * </p>
+ * Simple String to byte[] (and back) serializer. Converts Strings into bytes and vice-versa using
+ * the specified charset (by default UTF-8).
  *
+ * <p>Useful when the interaction with the Redis happens mainly through Strings.
  *
+ * <p>Does not perform any null conversion since empty strings are valid keys/values.
  */
 public class StringSerializer implements ISerializer<String> {
 

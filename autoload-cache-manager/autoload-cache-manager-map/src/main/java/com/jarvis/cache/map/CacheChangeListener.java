@@ -1,15 +1,9 @@
 package com.jarvis.cache.map;
 
-/**
- * 缓存变更监听器
- *
- *
- */
+/** 缓存变更监听器 */
 public interface CacheChangeListener {
 
-    /**
-     * 只变更一条记录
-     */
+    /** 只变更一条记录 */
     void cacheChange();
 
     /**

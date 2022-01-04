@@ -11,9 +11,7 @@ import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- *
- */
+/** */
 public class JdkSerializer implements ISerializer<Object> {
 
     @Override
@@ -45,8 +43,11 @@ public class JdkSerializer implements ISerializer<Object> {
             return obj;
         }
         Class<?> clazz = obj.getClass();
-        if (BeanUtil.isPrimitive(obj) || clazz.isEnum() || obj instanceof Class || clazz.isAnnotation()
-                || clazz.isSynthetic()) {// 常见不会被修改的数据类型
+        if (BeanUtil.isPrimitive(obj)
+                || clazz.isEnum()
+                || obj instanceof Class
+                || clazz.isAnnotation()
+                || clazz.isSynthetic()) { // 常见不会被修改的数据类型
             return obj;
         }
         if (obj instanceof Date) {
@@ -66,8 +67,13 @@ public class JdkSerializer implements ISerializer<Object> {
         }
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         if (args.length != genericParameterTypes.length) {
-            throw new Exception("the length of " + method.getDeclaringClass().getName() + "." + method.getName()
-                    + " must " + genericParameterTypes.length);
+            throw new Exception(
+                    "the length of "
+                            + method.getDeclaringClass().getName()
+                            + "."
+                            + method.getName()
+                            + " must "
+                            + genericParameterTypes.length);
         }
         Object[] res = new Object[args.length];
         int len = genericParameterTypes.length;

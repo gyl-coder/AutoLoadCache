@@ -1,6 +1,7 @@
 package com.jarvis.cache.script;
 
 import com.jarvis.cache.CacheUtil;
+
 import ognl.Ognl;
 import ognl.OgnlContext;
 
@@ -10,19 +11,16 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 解析JavaScript表达式
- *
- *
- */
+/** 解析JavaScript表达式 */
 public class OgnlParser extends AbstractScriptParser {
 
-    private final ConcurrentHashMap<String, Object> EXPRESSION_CACHE = new ConcurrentHashMap<String, Object>();
+    private final ConcurrentHashMap<String, Object> EXPRESSION_CACHE =
+            new ConcurrentHashMap<String, Object>();
 
-    private final ConcurrentHashMap<String, Class<?>> funcs = new ConcurrentHashMap<String, Class<?>>(8);
+    private final ConcurrentHashMap<String, Class<?>> funcs =
+            new ConcurrentHashMap<String, Class<?>>(8);
 
-    public OgnlParser() {
-    }
+    public OgnlParser() {}
 
     @Override
     public void addFunction(String name, Method method) {
@@ -31,24 +29,36 @@ public class OgnlParser extends AbstractScriptParser {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getElValue(String exp, Object target, Object[] arguments, Object retVal, boolean hasRetVal,
-                            Class<T> valueType) throws Exception {
+    public <T> T getElValue(
+            String exp,
+            Object target,
+            Object[] arguments,
+            Object retVal,
+            boolean hasRetVal,
+            Class<T> valueType)
+            throws Exception {
         if (valueType.equals(String.class)) {
-            if (exp.indexOf("#") == -1 && exp.indexOf("@") == -1 && exp.indexOf("'") == -1) {// 如果不是表达式，直接返回字符串
+            if (exp.indexOf("#") == -1
+                    && exp.indexOf("@") == -1
+                    && exp.indexOf("'") == -1) { // 如果不是表达式，直接返回字符串
                 return (T) exp;
             }
         }
         Object object = EXPRESSION_CACHE.get(exp);
         if (null == object) {
             String className = CacheUtil.class.getName();
-            String exp2 = exp.replaceAll("@@" + HASH + "\\(", "@" + className + "@getUniqueHashStr(");
+            String exp2 =
+                    exp.replaceAll("@@" + HASH + "\\(", "@" + className + "@getUniqueHashStr(");
             exp2 = exp2.replaceAll("@@" + EMPTY + "\\(", "@" + className + "@isEmpty(");
 
             Iterator<Map.Entry<String, Class<?>>> it = funcs.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, Class<?>> entry = it.next();
                 className = entry.getValue().getName();
-                exp2 = exp2.replaceAll("@@" + entry.getKey() + "\\(", "@" + className + "@" + entry.getKey() + "(");
+                exp2 =
+                        exp2.replaceAll(
+                                "@@" + entry.getKey() + "\\(",
+                                "@" + className + "@" + entry.getKey() + "(");
             }
             object = Ognl.parseExpression(exp2);
             EXPRESSION_CACHE.put(exp, object);

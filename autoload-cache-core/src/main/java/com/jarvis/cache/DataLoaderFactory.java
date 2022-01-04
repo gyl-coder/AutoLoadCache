@@ -7,9 +7,7 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
-/**
- *
- */
+/** */
 public class DataLoaderFactory extends BasePooledObjectFactory<DataLoader> {
 
     private static volatile DataLoaderFactory instance;

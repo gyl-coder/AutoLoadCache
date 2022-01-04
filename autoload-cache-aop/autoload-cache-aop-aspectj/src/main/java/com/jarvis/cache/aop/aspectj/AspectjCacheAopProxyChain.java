@@ -1,15 +1,14 @@
 package com.jarvis.cache.aop.aspectj;
 
 import com.jarvis.cache.aop.CacheAopProxyChain;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import java.lang.reflect.Method;
 
-/**
- *
- */
+/** */
 public class AspectjCacheAopProxyChain implements CacheAopProxyChain {
 
     private final ProceedingJoinPoint jp;
@@ -18,7 +17,6 @@ public class AspectjCacheAopProxyChain implements CacheAopProxyChain {
 
     public AspectjCacheAopProxyChain(ProceedingJoinPoint jp) {
         this.jp = jp;
-
     }
 
     @Override
@@ -45,5 +43,4 @@ public class AspectjCacheAopProxyChain implements CacheAopProxyChain {
     public Object doProxyChain(Object[] arguments) throws Throwable {
         return jp.proceed(arguments);
     }
-
 }

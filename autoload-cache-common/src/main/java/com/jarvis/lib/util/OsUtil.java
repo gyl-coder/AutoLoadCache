@@ -1,8 +1,6 @@
 package com.jarvis.lib.util;
 
-/**
- *
- */
+/** */
 public class OsUtil {
 
     private static OsUtil instance = new OsUtil();

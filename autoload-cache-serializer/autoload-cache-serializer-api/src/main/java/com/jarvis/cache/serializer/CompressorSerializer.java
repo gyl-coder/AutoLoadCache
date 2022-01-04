@@ -2,17 +2,14 @@ package com.jarvis.cache.serializer;
 
 import com.jarvis.cache.compress.CommonsCompressor;
 import com.jarvis.cache.compress.ICompressor;
+
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-/**
- * memcache缓存管理
- *
- *
- */
+/** memcache缓存管理 */
 public class CompressorSerializer implements ISerializer<Object> {
 
     private static final int DEFAULT_COMPRESSION_THRESHOLD = 16384;
@@ -34,13 +31,15 @@ public class CompressorSerializer implements ISerializer<Object> {
         this.compressor = new CommonsCompressor(CompressorStreamFactory.GZIP);
     }
 
-    public CompressorSerializer(ISerializer<Object> serializer, int compressionThreshold, String compressType) {
+    public CompressorSerializer(
+            ISerializer<Object> serializer, int compressionThreshold, String compressType) {
         this.serializer = serializer;
         this.compressionThreshold = compressionThreshold;
         this.compressor = new CommonsCompressor(compressType);
     }
 
-    public CompressorSerializer(ISerializer<Object> serializer, int compressionThreshold, ICompressor compressor) {
+    public CompressorSerializer(
+            ISerializer<Object> serializer, int compressionThreshold, ICompressor compressor) {
         this.serializer = serializer;
         this.compressionThreshold = compressionThreshold;
         this.compressor = compressor;

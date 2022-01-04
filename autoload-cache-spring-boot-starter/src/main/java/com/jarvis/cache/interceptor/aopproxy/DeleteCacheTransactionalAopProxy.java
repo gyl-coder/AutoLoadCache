@@ -1,8 +1,8 @@
 package com.jarvis.cache.interceptor.aopproxy;
 
-import org.aopalliance.intercept.MethodInvocation;
-
 import com.jarvis.cache.aop.DeleteCacheTransactionalAopProxyChain;
+
+import org.aopalliance.intercept.MethodInvocation;
 
 public class DeleteCacheTransactionalAopProxy implements DeleteCacheTransactionalAopProxyChain {
 
@@ -16,5 +16,4 @@ public class DeleteCacheTransactionalAopProxy implements DeleteCacheTransactiona
     public Object doProxyChain() throws Throwable {
         return invocation.proceed();
     }
-
 }

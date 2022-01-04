@@ -2,9 +2,7 @@ package com.jarvis.cache.util;
 
 import org.springframework.aop.framework.AopProxyUtils;
 
-/**
- *
- */
+/** */
 public class AopUtil {
 
     /**
@@ -18,5 +16,4 @@ public class AopUtil {
         }
         return targetClass;
     }
-
 }

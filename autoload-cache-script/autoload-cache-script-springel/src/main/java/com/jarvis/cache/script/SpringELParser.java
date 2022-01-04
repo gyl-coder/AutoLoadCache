@@ -1,6 +1,7 @@
 package com.jarvis.cache.script;
 
 import com.jarvis.cache.CacheUtil;
+
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -11,26 +12,19 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Spring EL表达式解析处理
- *
- *
- */
+/** Spring EL表达式解析处理 */
 public class SpringELParser extends AbstractScriptParser {
 
-    /**
-     * # 号
-     */
+    /** # 号 */
     private static final String POUND = "#";
 
-    /**
-     * 撇号
-     */
+    /** 撇号 */
     private static final String apostrophe = "'";
 
     private final ExpressionParser parser = new SpelExpressionParser();
 
-    private final ConcurrentHashMap<String, Expression> expCache = new ConcurrentHashMap<String, Expression>();
+    private final ConcurrentHashMap<String, Expression> expCache =
+            new ConcurrentHashMap<String, Expression>();
 
     private static Method hash = null;
 
@@ -38,8 +32,10 @@ public class SpringELParser extends AbstractScriptParser {
 
     static {
         try {
-            hash = CacheUtil.class.getDeclaredMethod("getUniqueHashStr", new Class[]{Object.class});
-            empty = CacheUtil.class.getDeclaredMethod("isEmpty", new Class[]{Object.class});
+            hash =
+                    CacheUtil.class.getDeclaredMethod(
+                            "getUniqueHashStr", new Class[] {Object.class});
+            empty = CacheUtil.class.getDeclaredMethod("isEmpty", new Class[] {Object.class});
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -49,10 +45,11 @@ public class SpringELParser extends AbstractScriptParser {
         }
     }
 
-    private final ConcurrentHashMap<String, Method> funcs = new ConcurrentHashMap<String, Method>(8);
+    private final ConcurrentHashMap<String, Method> funcs =
+            new ConcurrentHashMap<String, Method>(8);
 
     /**
-     * @param name   方法名
+     * @param name 方法名
      * @param method 方法
      */
     @Override
@@ -62,8 +59,14 @@ public class SpringELParser extends AbstractScriptParser {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getElValue(String keySpEL, Object target, Object[] arguments, Object retVal, boolean hasRetVal,
-                            Class<T> valueType) throws Exception {
+    public <T> T getElValue(
+            String keySpEL,
+            Object target,
+            Object[] arguments,
+            Object retVal,
+            boolean hasRetVal,
+            Class<T> valueType)
+            throws Exception {
         if (valueType.equals(String.class)) {
             // 如果不是表达式，直接返回字符串
             if (keySpEL.indexOf(POUND) == -1 && keySpEL.indexOf("'") == -1) {
@@ -91,5 +94,4 @@ public class SpringELParser extends AbstractScriptParser {
         }
         return expression.getValue(context, valueType);
     }
-
 }

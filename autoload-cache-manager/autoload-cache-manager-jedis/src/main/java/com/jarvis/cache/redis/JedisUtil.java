@@ -3,6 +3,7 @@ package com.jarvis.cache.redis;
 import com.jarvis.cache.MSetParam;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
+
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.PipelineBase;
 
@@ -12,7 +13,9 @@ import java.util.Set;
 @Slf4j
 public class JedisUtil {
 
-    public static void executeMSet(PipelineBase pipeline, AbstractRedisCacheManager manager, Collection<MSetParam> params) throws Exception {
+    public static void executeMSet(
+            PipelineBase pipeline, AbstractRedisCacheManager manager, Collection<MSetParam> params)
+            throws Exception {
         CacheKeyTO cacheKeyTO;
         String cacheKey;
         String hfield;
@@ -20,7 +23,7 @@ public class JedisUtil {
         byte[] key;
         byte[] val;
         for (MSetParam param : params) {
-            if(null == param){
+            if (null == param) {
                 continue;
             }
             cacheKeyTO = param.getCacheKey();
@@ -40,7 +43,8 @@ public class JedisUtil {
                     pipeline.setex(key, expire, val);
                 }
             } else {
-                int hExpire = manager.getHashExpire() < 0 ? result.getExpire() : manager.getHashExpire();
+                int hExpire =
+                        manager.getHashExpire() < 0 ? result.getExpire() : manager.getHashExpire();
                 pipeline.hset(key, AbstractRedisCacheManager.KEY_SERIALIZER.serialize(hfield), val);
                 if (hExpire > 0) {
                     pipeline.expire(key, hExpire);
@@ -88,6 +92,5 @@ public class JedisUtil {
                 pipeline.hdel(key, AbstractRedisCacheManager.KEY_SERIALIZER.serialize(hfield));
             }
         }
-
     }
 }

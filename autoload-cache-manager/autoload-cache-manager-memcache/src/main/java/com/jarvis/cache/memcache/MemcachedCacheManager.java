@@ -5,6 +5,7 @@ import com.jarvis.cache.MSetParam;
 import com.jarvis.cache.exception.CacheCenterConnectionException;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
+
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClient;
 
@@ -12,21 +13,18 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 
-/**
- * memcache缓存管理
- *
- *
- */
+/** memcache缓存管理 */
 @Slf4j
 public class MemcachedCacheManager implements ICacheManager {
 
     private MemcachedClient memcachedClient;
 
-    public MemcachedCacheManager() {
-    }
+    public MemcachedCacheManager() {}
 
     @Override
-    public void setCache(final CacheKeyTO cacheKeyTO, final CacheWrapper<Object> result, final Method method) throws CacheCenterConnectionException {
+    public void setCache(
+            final CacheKeyTO cacheKeyTO, final CacheWrapper<Object> result, final Method method)
+            throws CacheCenterConnectionException {
         if (null == cacheKeyTO) {
             return;
         }
@@ -44,7 +42,8 @@ public class MemcachedCacheManager implements ICacheManager {
     }
 
     @Override
-    public void mset(final Method method, final Collection<MSetParam> params) throws CacheCenterConnectionException {
+    public void mset(final Method method, final Collection<MSetParam> params)
+            throws CacheCenterConnectionException {
         if (null == params || params.isEmpty()) {
             return;
         }
@@ -58,7 +57,8 @@ public class MemcachedCacheManager implements ICacheManager {
 
     @SuppressWarnings("unchecked")
     @Override
-    public CacheWrapper<Object> get(final CacheKeyTO cacheKeyTO, Method method) throws CacheCenterConnectionException {
+    public CacheWrapper<Object> get(final CacheKeyTO cacheKeyTO, Method method)
+            throws CacheCenterConnectionException {
         if (null == cacheKeyTO) {
             return null;
         }
@@ -74,7 +74,9 @@ public class MemcachedCacheManager implements ICacheManager {
     }
 
     @Override
-    public Map<CacheKeyTO, CacheWrapper<Object>> mget(final Method method, final Type returnType, final Set<CacheKeyTO> keys) throws CacheCenterConnectionException {
+    public Map<CacheKeyTO, CacheWrapper<Object>> mget(
+            final Method method, final Type returnType, final Set<CacheKeyTO> keys)
+            throws CacheCenterConnectionException {
         if (null == keys || keys.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -137,5 +139,4 @@ public class MemcachedCacheManager implements ICacheManager {
     public void setMemcachedClient(MemcachedClient memcachedClient) {
         this.memcachedClient = memcachedClient;
     }
-
 }

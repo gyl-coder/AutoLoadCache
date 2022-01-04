@@ -1,5 +1,6 @@
-
 package com.jarvis.cache.demo.test;
+
+import com.jarvis.cache.demo.CacheDemoApplication;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -14,19 +15,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.jarvis.cache.demo.CacheDemoApplication;
-
-/**
- *
- */
+/** */
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CacheDemoApplication.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BaseServiceTest {
 
-    @Autowired
-    private WebApplicationContext wac;
+    @Autowired private WebApplicationContext wac;
 
     protected MockMvc mockMvc;
 
@@ -36,7 +32,5 @@ public class BaseServiceTest {
     }
 
     @Test
-    public void test() {
-
-    }
+    public void test() {}
 }

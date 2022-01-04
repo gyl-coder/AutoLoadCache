@@ -1,5 +1,13 @@
 package com.jarvis.cache.serializer.protobuf;
 
+import com.jarvis.cache.reflect.generics.ParameterizedTypeImpl;
+import com.jarvis.cache.reflect.lambda.Lambda;
+import com.jarvis.cache.reflect.lambda.LambdaFactory;
+import com.jarvis.cache.serializer.ISerializer;
+import com.jarvis.cache.to.CacheWrapper;
+
+import com.jarvis.lib.util.BeanUtil;
+import com.jarvis.lib.util.StringUtil;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -11,13 +19,6 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.protobuf.Message;
 import com.google.protobuf.NullValue;
-import com.jarvis.cache.reflect.generics.ParameterizedTypeImpl;
-import com.jarvis.cache.reflect.lambda.Lambda;
-import com.jarvis.cache.reflect.lambda.LambdaFactory;
-import com.jarvis.cache.serializer.ISerializer;
-import com.jarvis.cache.to.CacheWrapper;
-import com.jarvis.lib.util.BeanUtil;
-import com.jarvis.lib.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -30,9 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author zhengenshen@gmail.com
- */
+/** @author zhengenshen@gmail.com */
 @Slf4j
 public class ProtoBufSerializer implements ISerializer<CacheWrapper<Object>> {
 
@@ -62,7 +61,6 @@ public class ProtoBufSerializer implements ISerializer<CacheWrapper<Object>> {
         return byteBuf.toByteArray();
     }
 
-
     @Override
     public CacheWrapper<Object> deserialize(final byte[] bytes, Type returnType) throws Exception {
         if (bytes == null || bytes.length == 0) {
@@ -82,13 +80,15 @@ public class ProtoBufSerializer implements ISerializer<CacheWrapper<Object>> {
             Object obj = lambda.invoke_for_Object(new ByteArrayInputStream(body));
             cacheWrapper.setCacheObject(obj);
         } else {
-            Type[] agsType = new Type[]{returnType};
-            JavaType javaType = MAPPER.getTypeFactory().constructType(ParameterizedTypeImpl.make(CacheWrapper.class, agsType, null));
+            Type[] agsType = new Type[] {returnType};
+            JavaType javaType =
+                    MAPPER.getTypeFactory()
+                            .constructType(
+                                    ParameterizedTypeImpl.make(CacheWrapper.class, agsType, null));
             cacheWrapper.setCacheObject(MAPPER.readValue(body, clazz));
         }
         return cacheWrapper;
     }
-
 
     @SuppressWarnings("unchecked")
     @Override
@@ -97,8 +97,11 @@ public class ProtoBufSerializer implements ISerializer<CacheWrapper<Object>> {
             return null;
         }
         Class<?> clazz = obj.getClass();
-        if (BeanUtil.isPrimitive(obj) || clazz.isEnum() || obj instanceof Class || clazz.isAnnotation()
-                || clazz.isSynthetic()) {// 常见不会被修改的数据类型
+        if (BeanUtil.isPrimitive(obj)
+                || clazz.isEnum()
+                || obj instanceof Class
+                || clazz.isAnnotation()
+                || clazz.isSynthetic()) { // 常见不会被修改的数据类型
             return obj;
         }
         if (obj instanceof Date) {
@@ -122,7 +125,6 @@ public class ProtoBufSerializer implements ISerializer<CacheWrapper<Object>> {
         return MAPPER.readValue(MAPPER.writeValueAsBytes(obj), clazz);
     }
 
-
     @Override
     public Object[] deepCloneMethodArgs(Method method, Object[] args) throws Exception {
         if (null == args || args.length == 0) {
@@ -130,7 +132,13 @@ public class ProtoBufSerializer implements ISerializer<CacheWrapper<Object>> {
         }
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         if (args.length != genericParameterTypes.length) {
-            throw new Exception("the length of " + method.getDeclaringClass().getName() + "." + method.getName() + " must " + genericParameterTypes.length);
+            throw new Exception(
+                    "the length of "
+                            + method.getDeclaringClass().getName()
+                            + "."
+                            + method.getName()
+                            + " must "
+                            + genericParameterTypes.length);
         }
         Object[] res = new Object[args.length];
         int len = genericParameterTypes.length;
@@ -162,8 +170,7 @@ public class ProtoBufSerializer implements ISerializer<CacheWrapper<Object>> {
         private final String classIdentifier;
 
         /**
-         * @param classIdentifier can be {@literal null} and will be defaulted
-         *                        to {@code @class}.
+         * @param classIdentifier can be {@literal null} and will be defaulted to {@code @class}.
          */
         NullValueSerializer(String classIdentifier) {
 
@@ -179,7 +186,8 @@ public class ProtoBufSerializer implements ISerializer<CacheWrapper<Object>> {
          * com.fasterxml.jackson.databind.SerializerProvider)
          */
         @Override
-        public void serialize(NullValue value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+        public void serialize(NullValue value, JsonGenerator jgen, SerializerProvider provider)
+                throws IOException {
 
             jgen.writeStartObject();
             jgen.writeStringField(classIdentifier, NullValue.class.getName());

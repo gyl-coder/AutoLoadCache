@@ -4,6 +4,7 @@ import com.jarvis.cache.MSetParam;
 import com.jarvis.cache.serializer.ISerializer;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
+
 import io.lettuce.core.AbstractRedisAsyncCommands;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
@@ -29,7 +30,8 @@ public class LettuceRedisCacheManager extends AbstractRedisCacheManager {
 
     @Override
     protected IRedis getRedis() {
-        StatefulRedisConnection<byte[], byte[]> connection = redisClient.connect(ByteArrayCodec.INSTANCE);
+        StatefulRedisConnection<byte[], byte[]> connection =
+                redisClient.connect(ByteArrayCodec.INSTANCE);
         return new LettuceRedisClient(connection, this);
     }
 
@@ -39,7 +41,9 @@ public class LettuceRedisCacheManager extends AbstractRedisCacheManager {
 
         private final AbstractRedisCacheManager cacheManager;
 
-        public LettuceRedisClient(StatefulRedisConnection<byte[], byte[]> connection, AbstractRedisCacheManager cacheManager) {
+        public LettuceRedisClient(
+                StatefulRedisConnection<byte[], byte[]> connection,
+                AbstractRedisCacheManager cacheManager) {
             this.connection = connection;
             this.cacheManager = cacheManager;
         }
@@ -80,7 +84,10 @@ public class LettuceRedisCacheManager extends AbstractRedisCacheManager {
             this.connection.setAutoFlushCommands(false);
             RedisAsyncCommands<byte[], byte[]> asyncCommands = connection.async();
             try {
-                LettuceRedisUtil.executeMSet((AbstractRedisAsyncCommands<byte[], byte[]>) asyncCommands, cacheManager, params);
+                LettuceRedisUtil.executeMSet(
+                        (AbstractRedisAsyncCommands<byte[], byte[]>) asyncCommands,
+                        cacheManager,
+                        params);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             } finally {
@@ -111,7 +118,12 @@ public class LettuceRedisCacheManager extends AbstractRedisCacheManager {
         @Override
         public Map<CacheKeyTO, CacheWrapper<Object>> mget(Type returnType, Set<CacheKeyTO> keys) {
             RedisAsyncCommands<byte[], byte[]> asyncCommands = connection.async();
-            return LettuceRedisUtil.executeMGet(connection, (AbstractRedisAsyncCommands<byte[], byte[]>) asyncCommands, cacheManager, returnType, keys);
+            return LettuceRedisUtil.executeMGet(
+                    connection,
+                    (AbstractRedisAsyncCommands<byte[], byte[]>) asyncCommands,
+                    cacheManager,
+                    returnType,
+                    keys);
         }
 
         @Override
@@ -132,7 +144,9 @@ public class LettuceRedisCacheManager extends AbstractRedisCacheManager {
                     if (null == hfield || hfield.isEmpty()) {
                         asyncCommands.del(KEY_SERIALIZER.serialize(cacheKey));
                     } else {
-                        asyncCommands.hdel(KEY_SERIALIZER.serialize(cacheKey), KEY_SERIALIZER.serialize(hfield));
+                        asyncCommands.hdel(
+                                KEY_SERIALIZER.serialize(cacheKey),
+                                KEY_SERIALIZER.serialize(hfield));
                     }
                 }
             } catch (Exception ex) {
@@ -142,5 +156,4 @@ public class LettuceRedisCacheManager extends AbstractRedisCacheManager {
             }
         }
     }
-
 }

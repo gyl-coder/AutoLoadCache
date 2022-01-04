@@ -7,9 +7,7 @@ import com.caucho.hessian.io.IOExceptionWrapper;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
-/**
- *
- */
+/** */
 public class WeakReferenceDeserializer extends AbstractMapDeserializer {
 
     @Override
@@ -25,12 +23,10 @@ public class WeakReferenceDeserializer extends AbstractMapDeserializer {
         } catch (Exception e) {
             throw new IOExceptionWrapper(e);
         }
-
     }
 
     protected WeakReference<Object> instantiate() throws Exception {
         Object obj = new Object();
         return new WeakReference<Object>(obj);
     }
-
 }

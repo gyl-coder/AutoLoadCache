@@ -1,14 +1,12 @@
 package com.jarvis.cache.interceptor.aopproxy;
 
-import java.lang.reflect.Method;
+import com.jarvis.cache.aop.CacheAopProxyChain;
 
 import org.aopalliance.intercept.MethodInvocation;
 
-import com.jarvis.cache.aop.CacheAopProxyChain;
+import java.lang.reflect.Method;
 
-/**
- *
- */
+/** */
 public class CacheAopProxy implements CacheAopProxyChain {
 
     private final MethodInvocation invocation;
@@ -17,7 +15,6 @@ public class CacheAopProxy implements CacheAopProxyChain {
 
     public CacheAopProxy(MethodInvocation invocation) {
         this.invocation = invocation;
-
     }
 
     @Override
@@ -42,5 +39,4 @@ public class CacheAopProxy implements CacheAopProxyChain {
     public Object doProxyChain(Object[] arguments) throws Throwable {
         return getMethod().invoke(invocation.getThis(), arguments);
     }
-
 }

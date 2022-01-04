@@ -6,6 +6,7 @@ import com.jarvis.cache.script.AbstractScriptParser;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
 import com.jarvis.cache.to.LocalCacheWrapper;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
@@ -21,22 +22,19 @@ import java.util.*;
 @Slf4j
 public class ComboCacheManager implements ICacheManager {
 
-    /**
-     * 表达式解析器
-     */
+    /** 表达式解析器 */
     private final AbstractScriptParser scriptParser;
 
-    /**
-     * 本地缓存实现
-     */
+    /** 本地缓存实现 */
     private ICacheManager localCache;
 
-    /**
-     * 远程缓存实现
-     */
+    /** 远程缓存实现 */
     private ICacheManager remoteCache;
 
-    public ComboCacheManager(ICacheManager localCache, ICacheManager remoteCache, AbstractScriptParser scriptParser) {
+    public ComboCacheManager(
+            ICacheManager localCache,
+            ICacheManager remoteCache,
+            AbstractScriptParser scriptParser) {
         this.localCache = localCache;
         this.remoteCache = remoteCache;
         this.scriptParser = scriptParser;
@@ -57,7 +55,8 @@ public class ComboCacheManager implements ICacheManager {
     }
 
     @Override
-    public void mset(Method method, Collection<MSetParam> params) throws CacheCenterConnectionException {
+    public void mset(Method method, Collection<MSetParam> params)
+            throws CacheCenterConnectionException {
         if (method.isAnnotationPresent(LocalCache.class)) {
             LocalCache lCache = method.getAnnotation(LocalCache.class);
             for (MSetParam param : params) {
@@ -74,12 +73,17 @@ public class ComboCacheManager implements ICacheManager {
         remoteCache.mset(method, params);
     }
 
-    private void setLocalCache(LocalCache lCache, CacheKeyTO cacheKey, CacheWrapper<Object> result, Method method) {
+    private void setLocalCache(
+            LocalCache lCache, CacheKeyTO cacheKey, CacheWrapper<Object> result, Method method) {
         try {
             LocalCacheWrapper<Object> localResult = new LocalCacheWrapper<Object>();
             localResult.setLastLoadTime(System.currentTimeMillis());
-            int expire = scriptParser.getRealExpire(lCache.expire(), lCache.expireExpression(), null,
-                    result.getCacheObject());
+            int expire =
+                    scriptParser.getRealExpire(
+                            lCache.expire(),
+                            lCache.expireExpression(),
+                            null,
+                            result.getCacheObject());
             localResult.setExpire(expire);
             localResult.setCacheObject(result.getCacheObject());
 
@@ -92,7 +96,8 @@ public class ComboCacheManager implements ICacheManager {
     }
 
     @Override
-    public CacheWrapper<Object> get(CacheKeyTO key, Method method) throws CacheCenterConnectionException {
+    public CacheWrapper<Object> get(CacheKeyTO key, Method method)
+            throws CacheCenterConnectionException {
         LocalCache lCache = null;
         if (method.isAnnotationPresent(LocalCache.class)) {
             lCache = method.getAnnotation(LocalCache.class);
@@ -104,7 +109,10 @@ public class ComboCacheManager implements ICacheManager {
             if (null != result) {
                 if (result instanceof LocalCacheWrapper) {
                     LocalCacheWrapper<Object> localResult = (LocalCacheWrapper<Object>) result;
-                    return new CacheWrapper<Object>(localResult.getCacheObject(), localResult.getRemoteExpire(), localResult.getRemoteLastLoadTime());
+                    return new CacheWrapper<Object>(
+                            localResult.getCacheObject(),
+                            localResult.getRemoteExpire(),
+                            localResult.getRemoteLastLoadTime());
                 } else {
                     return result;
                 }
@@ -119,7 +127,9 @@ public class ComboCacheManager implements ICacheManager {
     }
 
     @Override
-    public Map<CacheKeyTO, CacheWrapper<Object>> mget(final Method method, final Type returnType, final Set<CacheKeyTO> keys) throws CacheCenterConnectionException {
+    public Map<CacheKeyTO, CacheWrapper<Object>> mget(
+            final Method method, final Type returnType, final Set<CacheKeyTO> keys)
+            throws CacheCenterConnectionException {
         LocalCache lCache = null;
         if (method.isAnnotationPresent(LocalCache.class)) {
             lCache = method.getAnnotation(LocalCache.class);
@@ -131,30 +141,36 @@ public class ComboCacheManager implements ICacheManager {
         Map<CacheKeyTO, CacheWrapper<Object>> remoteResults = null;
         if (!threadName.startsWith(AutoLoadHandler.THREAD_NAME_PREFIX)) {
             all = new HashMap<>(keys.size());
-            Map<CacheKeyTO, CacheWrapper<Object>> localResults = localCache.mget(method, returnType, keys);
+            Map<CacheKeyTO, CacheWrapper<Object>> localResults =
+                    localCache.mget(method, returnType, keys);
             if (null != localResults && !localResults.isEmpty()) {
-                Iterator<Map.Entry<CacheKeyTO, CacheWrapper<Object>>> iterator = localResults.entrySet().iterator();
+                Iterator<Map.Entry<CacheKeyTO, CacheWrapper<Object>>> iterator =
+                        localResults.entrySet().iterator();
                 while (iterator.hasNext()) {
                     Map.Entry<CacheKeyTO, CacheWrapper<Object>> item = iterator.next();
                     CacheWrapper<Object> result = item.getValue();
                     if (result instanceof LocalCacheWrapper) {
                         LocalCacheWrapper<Object> localResult = (LocalCacheWrapper<Object>) result;
-                        CacheWrapper<Object> result2 = new CacheWrapper<Object>(localResult.getCacheObject(), localResult.getRemoteExpire(), localResult.getRemoteLastLoadTime());
+                        CacheWrapper<Object> result2 =
+                                new CacheWrapper<Object>(
+                                        localResult.getCacheObject(),
+                                        localResult.getRemoteExpire(),
+                                        localResult.getRemoteLastLoadTime());
                         all.put(item.getKey(), result2);
                     } else {
                         all.put(item.getKey(), result);
                     }
                 }
             }
-            if(all.size() < keys.size()) {
+            if (all.size() < keys.size()) {
                 Set<CacheKeyTO> unCachekeys = new HashSet<>(keys.size() - all.size());
-                for(CacheKeyTO key : keys) {
-                    if(!all.containsKey(key)) {
+                for (CacheKeyTO key : keys) {
+                    if (!all.containsKey(key)) {
                         unCachekeys.add(key);
                     }
                 }
                 remoteResults = remoteCache.mget(method, returnType, keys);
-                if(null != remoteResults && !remoteResults.isEmpty()) {
+                if (null != remoteResults && !remoteResults.isEmpty()) {
                     all.putAll(remoteResults);
                 }
             }
@@ -163,9 +179,10 @@ public class ComboCacheManager implements ICacheManager {
             all = remoteResults;
         }
 
-        if(null != remoteResults && !remoteResults.isEmpty()) {
+        if (null != remoteResults && !remoteResults.isEmpty()) {
             // 放到本地缓存里
-            Iterator<Map.Entry<CacheKeyTO, CacheWrapper<Object>>> iterator = remoteResults.entrySet().iterator();
+            Iterator<Map.Entry<CacheKeyTO, CacheWrapper<Object>>> iterator =
+                    remoteResults.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<CacheKeyTO, CacheWrapper<Object>> item = iterator.next();
                 setLocalCache(lCache, item.getKey(), item.getValue(), method);

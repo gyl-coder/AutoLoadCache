@@ -7,6 +7,7 @@ import com.jarvis.cache.annotation.Magic;
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.mapper.UserMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-//@Transactional(readOnly = true)
+// @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserMapper userMapper;
+    @Autowired private UserMapper userMapper;
 
     @Override
     public UserDO getUserById(Long id) {
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     // @CacheDeleteTransactional
-    //@Transactional(rollbackFor = Throwable.class)
+    // @Transactional(rollbackFor = Throwable.class)
     public Long register(UserDO user) {
         Long userId = userMapper.getUserIdByName(user.getName());
         if (null != userId) {
@@ -70,8 +70,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    //@CacheDeleteTransactional
-    //@Transactional(rollbackFor = Throwable.class)
+    // @CacheDeleteTransactional
+    // @Transactional(rollbackFor = Throwable.class)
     public void updateUser(UserDO user) {
         userMapper.updateUser(user);
     }
@@ -92,10 +92,15 @@ public class UserServiceImpl implements UserService {
      * @param ids
      * @return
      */
-    @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60",
+    @Cache(
+            expire = 60,
+            expireExpression = "null == #retVal ? 30: 60",
             key = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #args[2]",
-            magic = @Magic(
-                    key = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #retVal.id", iterableArgIndex = 2))
+            magic =
+                    @Magic(
+                            key =
+                                    "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #retVal.id",
+                            iterableArgIndex = 2))
     public List<UserDO> testMagic(String name, String password, Long... ids) {
         List<UserDO> list = new ArrayList<>(ids.length);
         for (Long id : ids) {
@@ -108,10 +113,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60",
+    @Cache(
+            expire = 60,
+            expireExpression = "null == #retVal ? 30: 60",
             key = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #args[2]",
-            magic = @Magic(
-                    key = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #retVal.id", iterableArgIndex = 2))
+            magic =
+                    @Magic(
+                            key =
+                                    "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #retVal.id",
+                            iterableArgIndex = 2))
     public List<UserDO> testMagic(String name, String password, List<Long> ids) {
         List<UserDO> list = new ArrayList<>(ids.size());
         for (Long id : ids) {
@@ -124,17 +134,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CacheDelete(magic = {
-            @CacheDeleteMagicKey(value = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #args[2]", iterableArgIndex = 2, iterableReturnValue = false)
-    })
-    public void testDeleteMagicForArg(String name, String password, Long... ids) {
-
-    }
+    @CacheDelete(
+            magic = {
+                @CacheDeleteMagicKey(
+                        value = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #args[2]",
+                        iterableArgIndex = 2,
+                        iterableReturnValue = false)
+            })
+    public void testDeleteMagicForArg(String name, String password, Long... ids) {}
 
     @Override
-    @CacheDelete(magic = {
-            @CacheDeleteMagicKey(value = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #retVal.id", iterableArgIndex = -1, iterableReturnValue = true)
-    })
+    @CacheDelete(
+            magic = {
+                @CacheDeleteMagicKey(
+                        value = "'user-testMagic-' + #args[0] + '-' + #args[1] + '-' + #retVal.id",
+                        iterableArgIndex = -1,
+                        iterableReturnValue = true)
+            })
     public List<UserDO> testDeleteMagicForRetVal(String name, String password, Long... ids) {
         List<UserDO> list = new ArrayList<>(ids.length);
         for (Long id : ids) {
@@ -144,8 +160,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60",
-            key = "", magic = @Magic(key = "'user-magic-'+ #retVal.id"))
+    @Cache(
+            expire = 60,
+            expireExpression = "null == #retVal ? 30: 60",
+            key = "",
+            magic = @Magic(key = "'user-magic-'+ #retVal.id"))
     public List<UserDO> loadUsers() {
         List<UserDO> list = new ArrayList<>(5);
         for (Long id = 100L; id < 105; id++) {
@@ -155,8 +174,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cache(expire = 60, expireExpression = "null == #retVal ? 30: 60",
-            key = "'user-magic-'+ #args[0]", magic = @Magic(key = "'user-magic-'+ #retVal.id", iterableArgIndex = 0))
+    @Cache(
+            expire = 60,
+            expireExpression = "null == #retVal ? 30: 60",
+            key = "'user-magic-'+ #args[0]",
+            magic = @Magic(key = "'user-magic-'+ #retVal.id", iterableArgIndex = 0))
     public UserDO[] loadUsers(Long... ids) {
         UserDO[] users = new UserDO[ids.length];
         for (int i = 0; i < ids.length; i++) {
@@ -167,9 +189,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CacheDelete(magic = {
-            @CacheDeleteMagicKey(value = "'user-magic-' + #retVal.id", iterableArgIndex = -1, iterableReturnValue = true)
-    })
+    @CacheDelete(
+            magic = {
+                @CacheDeleteMagicKey(
+                        value = "'user-magic-' + #retVal.id",
+                        iterableArgIndex = -1,
+                        iterableReturnValue = true)
+            })
     public List<UserDO> deleteUsers() {
         List<UserDO> list = new ArrayList<>(5);
         for (Long id = 100L; id < 105; id++) {
@@ -177,6 +203,4 @@ public class UserServiceImpl implements UserService {
         }
         return list;
     }
-
-
 }

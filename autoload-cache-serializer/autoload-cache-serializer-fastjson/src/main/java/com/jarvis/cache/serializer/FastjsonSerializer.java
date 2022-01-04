@@ -1,10 +1,11 @@
 package com.jarvis.cache.serializer;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.jarvis.cache.reflect.generics.ParameterizedTypeImpl;
 import com.jarvis.cache.to.CacheWrapper;
+
 import com.jarvis.lib.util.BeanUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -20,16 +21,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- *
- */
+/** */
 public class FastjsonSerializer implements ISerializer<Object> {
 
     private final Charset charset;
 
-    private static final SerializerFeature[] FEATURES = {SerializerFeature.DisableCircularReferenceDetect};
+    private static final SerializerFeature[] FEATURES = {
+        SerializerFeature.DisableCircularReferenceDetect
+    };
 
-    private static final Map<Type, ParameterizedTypeImpl> TYPE_CACHE = new ConcurrentHashMap<>(1024);
+    private static final Map<Type, ParameterizedTypeImpl> TYPE_CACHE =
+            new ConcurrentHashMap<>(1024);
 
     public FastjsonSerializer() {
         this(StandardCharsets.UTF_8);
@@ -55,7 +57,7 @@ public class FastjsonSerializer implements ISerializer<Object> {
         }
         ParameterizedTypeImpl type = TYPE_CACHE.get(returnType);
         if (null == type) {
-            Type[] agsType = new Type[]{returnType};
+            Type[] agsType = new Type[] {returnType};
             type = ParameterizedTypeImpl.make(CacheWrapper.class, agsType, null);
             TYPE_CACHE.put(returnType, type);
         }
@@ -70,8 +72,11 @@ public class FastjsonSerializer implements ISerializer<Object> {
             return null;
         }
         Class<?> clazz = obj.getClass();
-        if (BeanUtil.isPrimitive(obj) || clazz.isEnum() || obj instanceof Class || clazz.isAnnotation()
-                || clazz.isSynthetic()) {// 常见不会被修改的数据类型
+        if (BeanUtil.isPrimitive(obj)
+                || clazz.isEnum()
+                || obj instanceof Class
+                || clazz.isAnnotation()
+                || clazz.isSynthetic()) { // 常见不会被修改的数据类型
             return obj;
         }
         if (obj instanceof Date) {
@@ -90,8 +95,10 @@ public class FastjsonSerializer implements ISerializer<Object> {
         if (clazz.isArray()) {
             Object[] arr = (Object[]) obj;
 
-            Object[] res = ((Object) clazz == (Object) Object[].class) ? (Object[]) new Object[arr.length]
-                    : (Object[]) Array.newInstance(clazz.getComponentType(), arr.length);
+            Object[] res =
+                    ((Object) clazz == (Object) Object[].class)
+                            ? (Object[]) new Object[arr.length]
+                            : (Object[]) Array.newInstance(clazz.getComponentType(), arr.length);
             for (int i = 0; i < arr.length; i++) {
                 res[i] = deepClone(arr[i], null);
             }
@@ -137,12 +144,19 @@ public class FastjsonSerializer implements ISerializer<Object> {
         }
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         if (args.length != genericParameterTypes.length) {
-            throw new Exception("the length of " + method.getDeclaringClass().getName() + "." + method.getName()
-                    + " must " + genericParameterTypes.length);
+            throw new Exception(
+                    "the length of "
+                            + method.getDeclaringClass().getName()
+                            + "."
+                            + method.getName()
+                            + " must "
+                            + genericParameterTypes.length);
         }
         Class<?> clazz = args.getClass();
-        Object[] res = ((Object) clazz == (Object) Object[].class) ? (Object[]) new Object[args.length]
-                : (Object[]) Array.newInstance(clazz.getComponentType(), args.length);
+        Object[] res =
+                ((Object) clazz == (Object) Object[].class)
+                        ? (Object[]) new Object[args.length]
+                        : (Object[]) Array.newInstance(clazz.getComponentType(), args.length);
         int len = genericParameterTypes.length;
         for (int i = 0; i < len; i++) {
             Type genericParameterType = genericParameterTypes[i];

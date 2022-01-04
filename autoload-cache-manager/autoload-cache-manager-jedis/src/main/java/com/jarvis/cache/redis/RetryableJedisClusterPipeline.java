@@ -14,11 +14,9 @@ import java.util.List;
 @Slf4j
 public abstract class RetryableJedisClusterPipeline {
 
-    /**
-     * 部分字段没有对应的获取方法，只能采用反射来做
-     * 也可以去继承JedisCluster和JedisSlotBasedConnectionHandler来提供访问接口
-     **/
+    /** 部分字段没有对应的获取方法，只能采用反射来做 也可以去继承JedisCluster和JedisSlotBasedConnectionHandler来提供访问接口 */
     private static final Field FIELD_CONNECTION_HANDLER;
+
     private static final Field FIELD_CACHE;
 
     static {
@@ -41,6 +39,7 @@ public abstract class RetryableJedisClusterPipeline {
 
     /**
      * 同步读取所有数据. 与syncAndReturnAll()相比，sync()只是没有对数据做反序列化
+     *
      * @throws Exception redis 异常
      */
     public void sync() throws Exception {
@@ -94,7 +93,8 @@ public abstract class RetryableJedisClusterPipeline {
             field.setAccessible(true);
             return field;
         } catch (NoSuchFieldException | SecurityException e) {
-            throw new RuntimeException("cannot find or access field '" + fieldName + "' from " + cls.getName(), e);
+            throw new RuntimeException(
+                    "cannot find or access field '" + fieldName + "' from " + cls.getName(), e);
         }
     }
 

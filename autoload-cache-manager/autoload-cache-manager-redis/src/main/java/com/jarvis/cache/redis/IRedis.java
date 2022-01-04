@@ -11,11 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Redis缓存操作
- *
- *
- */
+/** Redis缓存操作 */
 public interface IRedis extends Closeable {
 
     void set(final byte[] key, final byte[] value);
@@ -42,16 +38,17 @@ public interface IRedis extends Closeable {
      * 根据缓存Key获得缓存中的数据
      *
      * @param returnType 返回值类型
-     * @param keys       缓存keys
+     * @param keys 缓存keys
      * @return 缓存数据
      * @throws CacheCenterConnectionException 缓存异常
      */
-    Map<CacheKeyTO, CacheWrapper<Object>> mget(final Type returnType, final Set<CacheKeyTO> keys) throws Exception;
+    Map<CacheKeyTO, CacheWrapper<Object>> mget(final Type returnType, final Set<CacheKeyTO> keys)
+            throws Exception;
 
     /**
      * 批量删除
      *
-     * @param keys   缓存keys
+     * @param keys 缓存keys
      */
     void delete(Set<CacheKeyTO> keys);
 }

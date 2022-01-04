@@ -5,18 +5,14 @@ import com.jarvis.cache.to.CacheWrapper;
 
 import java.util.Set;
 
-/**
- * 缓存更新
- *
- *
- */
+/** 缓存更新 */
 public interface ChangeListener {
 
     /**
      * 缓存更新
      *
      * @param cacheKey 缓存Key
-     * @param newVal   新缓存值
+     * @param newVal 新缓存值
      */
     void update(CacheKeyTO cacheKey, CacheWrapper<Object> newVal);
 

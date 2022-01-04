@@ -6,14 +6,13 @@ import com.jarvis.cache.type.CacheOpType;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- *
- */
+/** */
 public class CacheHelper {
 
     private static final ThreadLocal<CacheOpType> OP_TYPE = new ThreadLocal<CacheOpType>();
 
-    private static final ThreadLocal<Set<CacheKeyTO>> DELETE_CACHE_KEYS = new ThreadLocal<Set<CacheKeyTO>>();
+    private static final ThreadLocal<Set<CacheKeyTO>> DELETE_CACHE_KEYS =
+            new ThreadLocal<Set<CacheKeyTO>>();
 
     /**
      * 获取CacheOpType
@@ -33,9 +32,7 @@ public class CacheHelper {
         OP_TYPE.set(opType);
     }
 
-    /**
-     * 移除CacheOpType
-     */
+    /** 移除CacheOpType */
     public static void clearCacheOpType() {
         OP_TYPE.remove();
     }

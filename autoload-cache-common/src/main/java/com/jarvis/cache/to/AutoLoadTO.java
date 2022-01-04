@@ -5,11 +5,7 @@ import com.jarvis.cache.aop.CacheAopProxyChain;
 
 import java.io.Serializable;
 
-/**
- * 用于处理自动加载数据到缓存
- *
- *
- */
+/** 用于处理自动加载数据到缓存 */
 public class AutoLoadTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -18,54 +14,41 @@ public class AutoLoadTO implements Serializable {
 
     private final Object[] args;
 
-    /**
-     * 缓存注解
-     */
+    /** 缓存注解 */
     private final Cache cache;
 
-    /**
-     * 缓存时长
-     */
+    /** 缓存时长 */
     private int expire;
 
-    /**
-     * 缓存Key
-     */
+    /** 缓存Key */
     private final CacheKeyTO cacheKey;
 
-    /**
-     * 上次从DAO加载数据时间
-     */
+    /** 上次从DAO加载数据时间 */
     private long lastLoadTime = 0L;
 
-    /**
-     * 上次请求数据时间
-     */
+    /** 上次请求数据时间 */
     private long lastRequestTime = 0L;
 
-    /**
-     * 第一次请求数据时间
-     */
+    /** 第一次请求数据时间 */
     private long firstRequestTime = 0L;
 
-    /**
-     * 请求数据次数
-     */
+    /** 请求数据次数 */
     private long requestTimes = 0L;
 
     private volatile boolean loading = false;
 
-    /**
-     * 加载次数
-     */
+    /** 加载次数 */
     private long loadCnt = 0L;
 
-    /**
-     * 从DAO中加载数据，使用时间的总和
-     */
+    /** 从DAO中加载数据，使用时间的总和 */
     private long useTotalTime = 0L;
 
-    public AutoLoadTO(CacheKeyTO cacheKey, CacheAopProxyChain joinPoint, Object args[], Cache cache, int expire) {
+    public AutoLoadTO(
+            CacheKeyTO cacheKey,
+            CacheAopProxyChain joinPoint,
+            Object args[],
+            Cache cache,
+            int expire) {
         this.cacheKey = cacheKey;
         this.joinPoint = joinPoint;
         this.args = args;
@@ -193,5 +176,4 @@ public class AutoLoadTO implements Serializable {
                 // 同步过期时间
                 .setExpire(cacheWrapper.getExpire());
     }
-
 }

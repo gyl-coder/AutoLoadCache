@@ -4,6 +4,7 @@ import com.jarvis.cache.MSetParam;
 import com.jarvis.cache.serializer.ISerializer;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
+
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
@@ -17,17 +18,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Redis缓存管理
- *
- *
- */
+/** Redis缓存管理 */
 @Slf4j
 public class ShardedJedisCacheManager extends AbstractRedisCacheManager {
 
     private final ShardedJedisPool shardedJedisPool;
 
-    public ShardedJedisCacheManager(ShardedJedisPool shardedJedisPool, ISerializer<Object> serializer) {
+    public ShardedJedisCacheManager(
+            ShardedJedisPool shardedJedisPool, ISerializer<Object> serializer) {
         super(serializer);
         this.shardedJedisPool = shardedJedisPool;
     }
@@ -43,7 +41,8 @@ public class ShardedJedisCacheManager extends AbstractRedisCacheManager {
 
         private final AbstractRedisCacheManager cacheManager;
 
-        public ShardedJedisClient(ShardedJedis shardedJedis, AbstractRedisCacheManager cacheManager) {
+        public ShardedJedisClient(
+                ShardedJedis shardedJedis, AbstractRedisCacheManager cacheManager) {
             this.shardedJedis = shardedJedis;
             this.cacheManager = cacheManager;
         }
@@ -107,7 +106,8 @@ public class ShardedJedisCacheManager extends AbstractRedisCacheManager {
         }
 
         @Override
-        public Map<CacheKeyTO, CacheWrapper<Object>> mget(Type returnType, Set<CacheKeyTO> keys) throws Exception {
+        public Map<CacheKeyTO, CacheWrapper<Object>> mget(Type returnType, Set<CacheKeyTO> keys)
+                throws Exception {
             ShardedJedisPipeline pipeline = new ShardedJedisPipeline();
             pipeline.setShardedJedis(shardedJedis);
             JedisUtil.executeMGet(pipeline, keys);
@@ -122,6 +122,5 @@ public class ShardedJedisCacheManager extends AbstractRedisCacheManager {
             JedisUtil.executeDelete(pipeline, keys);
             pipeline.sync();
         }
-
     }
 }

@@ -8,9 +8,7 @@ import com.caucho.hessian.io.Serializer;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 
-/**
- *
- */
+/** */
 public class SoftReferenceSerializer extends AbstractSerializer implements ObjectSerializer {
 
     @Override

@@ -7,9 +7,7 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-/**
- *
- */
+/** */
 public class CommonsCompressor implements ICompressor {
 
     private static final int BUFFER = 1024;
@@ -57,5 +55,4 @@ public class CommonsCompressor implements ICompressor {
         bais.close();
         return output;
     }
-
 }

@@ -1,25 +1,23 @@
 package com.jarvis.cache.lock;
 
 import com.jarvis.cache.to.RedisLockInfo;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * 基于Redis实现分布式锁
- *
- *
- */
+/** 基于Redis实现分布式锁 */
 @Slf4j
 public abstract class AbstractRedisLock implements ILock {
 
-    private static final ThreadLocal<Map<String, RedisLockInfo>> LOCK_START_TIME = new ThreadLocal<Map<String, RedisLockInfo>>() {
-        @Override
-        protected Map<String, RedisLockInfo> initialValue() {
-            return new HashMap<>(4);
-        }
-    };
+    private static final ThreadLocal<Map<String, RedisLockInfo>> LOCK_START_TIME =
+            new ThreadLocal<Map<String, RedisLockInfo>>() {
+                @Override
+                protected Map<String, RedisLockInfo> initialValue() {
+                    return new HashMap<>(4);
+                }
+            };
 
     protected static final String OK = "OK";
 
@@ -30,8 +28,8 @@ public abstract class AbstractRedisLock implements ILock {
     /**
      * SETNX
      *
-     * @param key    key
-     * @param val    vale
+     * @param key key
+     * @param val vale
      * @param expire 过期时间
      * @return 是否设置成功
      */

@@ -4,6 +4,7 @@ import com.jarvis.cache.MSetParam;
 import com.jarvis.cache.serializer.ISerializer;
 import com.jarvis.cache.to.CacheKeyTO;
 import com.jarvis.cache.to.CacheWrapper;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -14,17 +15,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Redis缓存管理
- *
- *
- */
+/** Redis缓存管理 */
 @Slf4j
 public class SpringRedisCacheManager extends AbstractRedisCacheManager {
 
     private final RedisConnectionFactory redisConnectionFactory;
 
-    public SpringRedisCacheManager(RedisConnectionFactory redisConnectionFactory, ISerializer<Object> serializer) {
+    public SpringRedisCacheManager(
+            RedisConnectionFactory redisConnectionFactory, ISerializer<Object> serializer) {
         super(serializer);
         this.redisConnectionFactory = redisConnectionFactory;
     }
@@ -40,7 +38,9 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
 
         private final AbstractRedisCacheManager cacheManager;
 
-        public RedisConnectionClient(RedisConnectionFactory redisConnectionFactory, AbstractRedisCacheManager cacheManager) {
+        public RedisConnectionClient(
+                RedisConnectionFactory redisConnectionFactory,
+                AbstractRedisCacheManager cacheManager) {
             this.redisConnectionFactory = redisConnectionFactory;
             this.redisConnection = RedisConnectionUtils.getConnection(redisConnectionFactory);
             // TransactionSynchronizationManager.hasResource(redisConnectionFactory);
@@ -109,8 +109,16 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
                             redisConnection.stringCommands().setEx(key, expire, val);
                         }
                     } else {
-                        int hExpire = cacheManager.getHashExpire() < 0 ? result.getExpire() : cacheManager.getHashExpire();
-                        redisConnection.hashCommands().hSet(key, AbstractRedisCacheManager.KEY_SERIALIZER.serialize(hfield), val);
+                        int hExpire =
+                                cacheManager.getHashExpire() < 0
+                                        ? result.getExpire()
+                                        : cacheManager.getHashExpire();
+                        redisConnection
+                                .hashCommands()
+                                .hSet(
+                                        key,
+                                        AbstractRedisCacheManager.KEY_SERIALIZER.serialize(hfield),
+                                        val);
                         if (hExpire > 0) {
                             redisConnection.keyCommands().expire(key, hExpire);
                         }
@@ -132,7 +140,8 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
         }
 
         @Override
-        public Map<CacheKeyTO, CacheWrapper<Object>> mget(Type returnType, Set<CacheKeyTO> keys) throws Exception {
+        public Map<CacheKeyTO, CacheWrapper<Object>> mget(Type returnType, Set<CacheKeyTO> keys)
+                throws Exception {
             String hfield;
             String cacheKey;
             byte[] key;
@@ -148,7 +157,11 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
                     if (null == hfield || hfield.isEmpty()) {
                         redisConnection.stringCommands().get(key);
                     } else {
-                        redisConnection.hashCommands().hGet(key, AbstractRedisCacheManager.KEY_SERIALIZER.serialize(hfield));
+                        redisConnection
+                                .hashCommands()
+                                .hGet(
+                                        key,
+                                        AbstractRedisCacheManager.KEY_SERIALIZER.serialize(hfield));
                     }
                 }
             } finally {
@@ -172,16 +185,16 @@ public class SpringRedisCacheManager extends AbstractRedisCacheManager {
                     if (null == hfield || hfield.length() == 0) {
                         redisConnection.keyCommands().del(KEY_SERIALIZER.serialize(cacheKey));
                     } else {
-                        redisConnection.hashCommands().hDel(KEY_SERIALIZER.serialize(cacheKey), KEY_SERIALIZER.serialize(hfield));
+                        redisConnection
+                                .hashCommands()
+                                .hDel(
+                                        KEY_SERIALIZER.serialize(cacheKey),
+                                        KEY_SERIALIZER.serialize(hfield));
                     }
                 }
             } finally {
                 redisConnection.closePipeline();
             }
-
         }
-
-
     }
-
 }

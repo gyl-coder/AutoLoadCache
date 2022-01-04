@@ -29,12 +29,16 @@ public class DefaultKryoContext implements KryoContext {
     private DefaultKryoContext() {
         registrations = new ArrayList<>();
 
-        //KryoFactory的create方法会延后调用
-        pool = new KryoPool.Builder(() -> {
-            Kryo kryo = new Kryo();
-            registrations.forEach(reg -> reg.register(kryo));
-            return kryo;
-        }).softReferences().build();
+        // KryoFactory的create方法会延后调用
+        pool =
+                new KryoPool.Builder(
+                                () -> {
+                                    Kryo kryo = new Kryo();
+                                    registrations.forEach(reg -> reg.register(kryo));
+                                    return kryo;
+                                })
+                        .softReferences()
+                        .build();
     }
 
     @Override

@@ -1,6 +1,9 @@
 package com.jarvis.cache.demo.web;
 
-import java.util.List;
+import com.jarvis.cache.demo.condition.UserCondition;
+import com.jarvis.cache.demo.entity.UserDO;
+import com.jarvis.cache.demo.service.UserDAO;
+import com.jarvis.cache.demo.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,21 +11,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jarvis.cache.demo.condition.UserCondition;
-import com.jarvis.cache.demo.entity.UserDO;
-import com.jarvis.cache.demo.service.UserDAO;
-import com.jarvis.cache.demo.service.UserService;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-    
-    @Autowired 
-    private UserDAO userDAO;
-    
+    @Autowired private UserService userService;
+
+    @Autowired private UserDAO userDAO;
+
     @GetMapping()
     public List<UserDO> list() {
         UserCondition condition = new UserCondition();
@@ -51,5 +49,4 @@ public class UserController {
         user.setName("name:" + id);
         userService.updateUser(user);
     }
-
 }

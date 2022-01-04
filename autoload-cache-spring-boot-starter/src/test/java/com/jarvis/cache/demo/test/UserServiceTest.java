@@ -1,10 +1,10 @@
-
 package com.jarvis.cache.demo.test;
 
 import com.jarvis.cache.demo.condition.UserCondition;
 import com.jarvis.cache.demo.entity.UserDO;
 import com.jarvis.cache.demo.mapper.UserMapper;
 import com.jarvis.cache.demo.service.UserService;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -16,24 +16,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-/**
- *
- */
+/** */
 @Slf4j
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserServiceTest extends BaseServiceTest {
-    @Autowired
-    private UserService userService;
+    @Autowired private UserService userService;
 
-    @Autowired
-    private UserMapper userMapper;
+    @Autowired private UserMapper userMapper;
 
-    //@Test
+    // @Test
     @Transactional
     @Rollback(true)
     public void test1Add() throws Exception {
@@ -120,7 +114,6 @@ public class UserServiceTest extends BaseServiceTest {
             Assert.assertNotNull(user);
             System.out.println("list item --->" + user);
         }
-
     }
 
     @Test
@@ -128,17 +121,17 @@ public class UserServiceTest extends BaseServiceTest {
     @Rollback(true)
     public void testMagic2() throws Exception {
         List<UserDO> list = userService.testMagic("name", "pwd", 100L, 200L, 300L);
-        //Assert.assertNotNull(list);
-        //Assert.assertEquals(list.size(), 2);
+        // Assert.assertNotNull(list);
+        // Assert.assertEquals(list.size(), 2);
 
         list = userService.testMagic("name", "pwd", 100L, 200L, 300L, 400L);
-        //Assert.assertNotNull(list);
-        //Assert.assertEquals(list.size(), 3);
+        // Assert.assertNotNull(list);
+        // Assert.assertEquals(list.size(), 3);
 
         List<Long> ids = Arrays.asList(100L, 200L, 300L, 400L, 500L);
         list = userService.testMagic("name", "pwd", ids);
-        //Assert.assertNotNull(list);
-        //Assert.assertEquals(list.size(), 4);
+        // Assert.assertNotNull(list);
+        // Assert.assertEquals(list.size(), 4);
 
         userService.testDeleteMagicForArg("name", "pwd", 100L, 200L);
 
@@ -152,21 +145,21 @@ public class UserServiceTest extends BaseServiceTest {
         List<UserDO> list = userService.loadUsers();
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 5);
-        for(UserDO userDO: list) {
+        for (UserDO userDO : list) {
             System.out.println(userDO);
         }
 
-        UserDO[] users = userService.loadUsers(1L,2L,3L,4L,5L);
+        UserDO[] users = userService.loadUsers(1L, 2L, 3L, 4L, 5L);
         Assert.assertNotNull(users);
         Assert.assertEquals(users.length, 5);
-        for(UserDO userDO: users) {
+        for (UserDO userDO : users) {
             System.out.println(userDO);
         }
-        Long[] ids =new Long[0];
+        Long[] ids = new Long[0];
         UserDO[] users2 = userService.loadUsers(ids);
         Assert.assertNotNull(users2);
         Assert.assertEquals(users2.length, 0);
-        for(UserDO userDO: users2) {
+        for (UserDO userDO : users2) {
             System.out.println(userDO);
         }
 
@@ -174,5 +167,4 @@ public class UserServiceTest extends BaseServiceTest {
         Assert.assertNotNull(list);
         Assert.assertEquals(list.size(), 5);
     }
-
 }

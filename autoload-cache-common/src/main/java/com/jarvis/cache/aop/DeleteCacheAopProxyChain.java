@@ -2,9 +2,7 @@ package com.jarvis.cache.aop;
 
 import java.lang.reflect.Method;
 
-/**
- *
- */
+/** */
 public interface DeleteCacheAopProxyChain {
 
     /**
@@ -27,5 +25,4 @@ public interface DeleteCacheAopProxyChain {
      * @return 方法
      */
     Method getMethod();
-
 }

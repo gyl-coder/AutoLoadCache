@@ -3,6 +3,7 @@ package com.jarvis.cache.demo.test;
 import com.jarvis.cache.demo.CacheDemoApplication;
 import com.jarvis.cache.redis.JedisClusterPipeline;
 import com.jarvis.cache.redis.RetryableJedisClusterPipeline;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,9 +21,7 @@ import redis.clients.jedis.JedisCluster;
 @SpringBootTest(classes = CacheDemoApplication.class)
 public class JedisClusterTest {
 
-    @Autowired
-    private RedisConnectionFactory connectionFactory;
-
+    @Autowired private RedisConnectionFactory connectionFactory;
 
     private JedisCluster getJedisCluster() {
         if (null == connectionFactory) {
@@ -40,7 +39,8 @@ public class JedisClusterTest {
             log.error(e.getMessage(), e);
         }
         if (redisConnection instanceof JedisClusterConnection) {
-            JedisClusterConnection redisClusterConnection = (JedisClusterConnection) redisConnection;
+            JedisClusterConnection redisClusterConnection =
+                    (JedisClusterConnection) redisConnection;
             // 优先使用JedisCluster; 因为JedisClusterConnection 不支持eval、evalSha等方法需要使用JedisCluster
             JedisCluster jedisCluster = redisClusterConnection.getNativeConnection();
             return jedisCluster;
@@ -71,13 +71,14 @@ public class JedisClusterTest {
         }
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
-            RetryableJedisClusterPipeline retryableJedisClusterPipeline = new RetryableJedisClusterPipeline(jedisCluster) {
-                @Override
-                public void execute(JedisClusterPipeline pipeline) {
-                    pipeline.hset("htest2", "tttt", "aaaa");
-                    pipeline.expire("htest2", 100);
-                }
-            };
+            RetryableJedisClusterPipeline retryableJedisClusterPipeline =
+                    new RetryableJedisClusterPipeline(jedisCluster) {
+                        @Override
+                        public void execute(JedisClusterPipeline pipeline) {
+                            pipeline.hset("htest2", "tttt", "aaaa");
+                            pipeline.expire("htest2", 100);
+                        }
+                    };
             retryableJedisClusterPipeline.sync();
         }
         System.out.println("testJedisCluster2 use time :" + (System.currentTimeMillis() - start));

@@ -1,10 +1,11 @@
 package com.jarvis.cache.serializer.kryo;
 
+import com.jarvis.cache.to.CacheWrapper;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.jarvis.cache.to.CacheWrapper;
 
 /**
  * autoload-cache CacheWrapper Serializer
@@ -33,5 +34,4 @@ public class CacheWrapperSerializer extends Serializer<CacheWrapper> {
         cacheWrapper.setLastLoadTime(lastLoadTime);
         return cacheWrapper;
     }
-
 }

@@ -2,6 +2,7 @@ package com.jarvis.cache.redis;
 
 import com.jarvis.cache.lock.AbstractRedisLock;
 import com.jarvis.cache.serializer.StringSerializer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -35,7 +36,14 @@ public class SpringRedisLock extends AbstractRedisLock {
         try {
             Expiration expiration = Expiration.from(expire, TimeUnit.SECONDS);
             // 采用redisson做客户端时，set key value [EX | PX] [NX | XX] 会因为条件不满足无法设值成功而返回null导致拆箱空指针
-            Boolean locked = redisConnection.stringCommands().set(STRING_SERIALIZER.serialize(key), STRING_SERIALIZER.serialize(val), expiration, RedisStringCommands.SetOption.SET_IF_ABSENT);
+            Boolean locked =
+                    redisConnection
+                            .stringCommands()
+                            .set(
+                                    STRING_SERIALIZER.serialize(key),
+                                    STRING_SERIALIZER.serialize(val),
+                                    expiration,
+                                    RedisStringCommands.SetOption.SET_IF_ABSENT);
             return locked == null ? false : locked;
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
@@ -59,5 +67,4 @@ public class SpringRedisLock extends AbstractRedisLock {
             RedisConnectionUtils.releaseConnection(redisConnection, redisConnectionFactory);
         }
     }
-
 }
