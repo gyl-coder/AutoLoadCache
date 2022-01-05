@@ -3,43 +3,43 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.github.qiujiayu</groupId>
-        <artifactId>autoload-cache-parent</artifactId>
+        <artifactId>autoload-cache</artifactId>
+        <groupId>com.jarvis.cache</groupId>
         <version>${revision}</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
+
     <groupId>com.github.qiujiayu</groupId>
     <artifactId>autoload-cache-core</artifactId>
     <name>${project.artifactId}</name>
     <packaging>jar</packaging>
-    <modelVersion>4.0.0</modelVersion>
+
     <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <skip_maven_deploy>false</skip_maven_deploy>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.github.qiujiayu</groupId>
             <artifactId>autoload-cache-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.qiujiayu</groupId>
-            <artifactId>autoload-cache-lock-api</artifactId>
-            <version>${project.version}</version>
+            <artifactId>autoload-cache-lock</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.qiujiayu</groupId>
-            <artifactId>autoload-cache-manager-api</artifactId>
-            <version>${project.version}</version>
+            <artifactId>autoload-cache-manager</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.qiujiayu</groupId>
-            <artifactId>autoload-cache-script-api</artifactId>
-            <version>${project.version}</version>
+            <artifactId>autoload-cache-script</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.qiujiayu</groupId>
-            <artifactId>autoload-cache-serializer-api</artifactId>
-            <version>${project.version}</version>
+            <artifactId>autoload-cache-serializer</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -50,4 +50,5 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
     </dependencies>
+
 </project>
