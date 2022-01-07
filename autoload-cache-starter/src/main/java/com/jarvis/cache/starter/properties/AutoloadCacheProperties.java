@@ -1,22 +1,26 @@
-package com.jarvis.cache.starter.autoconfigure;
+package com.jarvis.cache.starter.properties;
 
-import com.jarvis.cache.common.to.AutoLoadConfig;
+import com.jarvis.cache.common.annotation.Cache;
+import com.jarvis.cache.common.config.AutoLoadConfig;
+import com.jarvis.cache.common.config.JedisCacheManagerConfig;
 
 import javax.annotation.PostConstruct;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.env.Environment;
 
-/** */
+/** 自定义配置项 */
 @Data
 @ConfigurationProperties(prefix = AutoloadCacheProperties.PREFIX)
 public class AutoloadCacheProperties {
 
     public static final String PREFIX = "autoload.cache";
 
-    private AutoLoadConfig config = new AutoLoadConfig();
+    /** 全局配置项 {@link NestedConfigurationProperty 用于配置类中比较复杂的配置型，例如嵌套类型} */
+    @NestedConfigurationProperty private AutoLoadConfig config = new AutoLoadConfig();
 
     private JedisCacheManagerConfig jedis = new JedisCacheManagerConfig();
 
@@ -28,10 +32,13 @@ public class AutoloadCacheProperties {
 
     private boolean enable = true;
 
-    /** @Cache 注解是否生效, 默认值为true */
+    /** {@link Cache 注解是否生效, 默认值为true } */
     private boolean enableReadAndWrite = true;
 
-    /** @DeleteCache 和 @DeleteCacheTransactional 注解是否生效, 默认值为true */
+    /**
+     * {@link com.jarvis.cache.common.annotation.CacheDelete CacheDeleteTransactional 注解是否生效,
+     * 默认值为true}
+     */
     private boolean enableDelete = true;
 
     /** @Cache 注解AOP执行顺序 */
@@ -39,6 +46,7 @@ public class AutoloadCacheProperties {
 
     /** @DeleteCache 注解AOP执行顺序 */
     private int deleteCacheOrder = Integer.MAX_VALUE;
+
     /** @DeleteCacheTransactionalAspect 注解AOP执行顺序 */
     private int deleteCacheTransactionalOrder = 0;
 
@@ -58,15 +66,5 @@ public class AutoloadCacheProperties {
                 }
             }
         }
-    }
-
-    /** 对JedisClusterCacheManager 进行配置 */
-    @Data
-    static class JedisCacheManagerConfig {
-
-        /**
-         * Hash的缓存时长：等于0时永久缓存；大于0时，主要是为了防止一些已经不用的缓存占用内存;hashExpire小于0时，则使用@Cache中设置的expire值（默认值为-1）。
-         */
-        private int hashExpire = -1;
     }
 }

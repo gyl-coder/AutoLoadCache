@@ -2,8 +2,8 @@ package com.jarvis.cache.core;
 
 import com.jarvis.cache.common.annotation.Cache;
 import com.jarvis.cache.common.aop.CacheAopProxyChain;
+import com.jarvis.cache.common.config.AutoLoadConfig;
 import com.jarvis.cache.common.exception.LoadDataTimeOutException;
-import com.jarvis.cache.common.to.AutoLoadConfig;
 import com.jarvis.cache.common.to.AutoLoadTO;
 import com.jarvis.cache.common.to.CacheKeyTO;
 import com.jarvis.cache.common.to.CacheWrapper;

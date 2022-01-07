@@ -2,6 +2,7 @@ package com.jarvis.cache.starter.admin;
 
 import lombok.Data;
 
+/** 内置内存管理页面展示数据 */
 @Data
 public class AutoLoadVO {
 

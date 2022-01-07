@@ -1,6 +1,6 @@
 package com.jarvis.cache.starter.admin;
 
-import com.jarvis.cache.starter.autoconfigure.AutoloadCacheProperties;
+import com.jarvis.cache.starter.properties.AutoloadCacheProperties;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -16,7 +16,12 @@ import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.util.Base64;
 
-/** */
+/**
+ * Filter 是 JavaEE 中 Servlet 规范的一个组件，位于包javax.servlet 中，它可以在 HTTP 请求到达 Servlet 之前，被一个或多个Filter处理。
+ * <br>
+ * 它的工作流程如图：客户端 ---> 过滤器（1，2，3...） ---> controller <br>
+ * Filter的这个特性在生产环境中有很广泛的应用，如：修改请求和响应、防止xss攻击、包装二进制流使其可以多次读，等等。<br>
+ */
 public class HTTPBasicAuthorizeAttribute implements Filter {
 
     private static final String SESSION_AUTH_ATTRIBUTE = "autoload-cache-auth";
@@ -47,6 +52,7 @@ public class HTTPBasicAuthorizeAttribute implements Filter {
                 return;
             }
         }
+        // 如果Filter要使请求继续被处理，就一定要调用filterChain.doFilter()
         chain.doFilter(request, response);
     }
 

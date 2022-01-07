@@ -1,63 +1,53 @@
-package com.jarvis.cache.starter.interceptor;
+package com.jarvis.cache.aop.springaop.interceptor;
 
+import com.jarvis.cache.aop.springaop.interceptor.aopproxy.DeleteCacheTransactionalAopProxy;
+import com.jarvis.cache.aop.springaop.util.AopUtil;
 import com.jarvis.cache.common.annotation.CacheDeleteTransactional;
 import com.jarvis.cache.core.CacheHandler;
-import com.jarvis.cache.starter.autoconfigure.AutoloadCacheProperties;
-import com.jarvis.cache.starter.interceptor.aopproxy.DeleteCacheTransactionalAopProxy;
-import com.jarvis.cache.starter.util.AopUtil;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
 
 import java.lang.reflect.Method;
 
-/** 对@CacheDeleteTransactional 拦截注解 */
-public class CacheDeleteTransactionalInterceptor implements MethodInterceptor {
+/** 对 {@link CacheDeleteTransactional } 拦截注解 */
+@Slf4j
+public class CacheDeleteTransactionalMethodInterceptor implements MethodInterceptor {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(CacheDeleteTransactionalInterceptor.class);
+    /** 是否开启 对 @CacheDeleteTransactional 注解的增强逻辑 */
+    private final boolean isEnable;
 
     private final CacheHandler cacheHandler;
 
-    private final AutoloadCacheProperties config;
-
-    public CacheDeleteTransactionalInterceptor(
-            CacheHandler cacheHandler, AutoloadCacheProperties config) {
+    public CacheDeleteTransactionalMethodInterceptor(CacheHandler cacheHandler, boolean isEnable) {
         this.cacheHandler = cacheHandler;
-        this.config = config;
+        this.isEnable = isEnable;
     }
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        if (!this.config.isEnable()) {
+        if (isEnable) {
             return invocation.proceed();
         }
         Method method = invocation.getMethod();
         // if (method.getDeclaringClass().isInterface()) {
         Class<?> cls = AopUtil.getTargetClass(invocation.getThis());
         if (!cls.equals(invocation.getThis().getClass())) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(invocation.getThis().getClass() + "-->" + cls);
-            }
+            log.debug(invocation.getThis().getClass() + "-->" + cls);
             return invocation.proceed();
         }
         // }
-        if (logger.isDebugEnabled()) {
-            logger.debug(invocation.toString());
-        }
+        log.debug(invocation.toString());
         if (method.isAnnotationPresent(CacheDeleteTransactional.class)) {
             CacheDeleteTransactional cacheDeleteTransactional =
                     method.getAnnotation(CacheDeleteTransactional.class);
-            if (logger.isDebugEnabled()) {
-                logger.debug(
-                        invocation.getThis().getClass().getName()
-                                + "."
-                                + method.getName()
-                                + "-->@CacheDeleteTransactional");
-            }
+            log.debug(
+                    invocation.getThis().getClass().getName()
+                            + "."
+                            + method.getName()
+                            + "-->@CacheDeleteTransactional");
             return cacheHandler.proceedDeleteCacheTransactional(
                     new DeleteCacheTransactionalAopProxy(invocation), cacheDeleteTransactional);
         } else {
@@ -66,13 +56,11 @@ public class CacheDeleteTransactionalInterceptor implements MethodInterceptor {
             if (specificMethod.isAnnotationPresent(CacheDeleteTransactional.class)) {
                 CacheDeleteTransactional cacheDeleteTransactional =
                         specificMethod.getAnnotation(CacheDeleteTransactional.class);
-                if (logger.isDebugEnabled()) {
-                    logger.debug(
-                            invocation.getThis().getClass().getName()
-                                    + "."
-                                    + specificMethod.getName()
-                                    + "-->@CacheDeleteTransactional");
-                }
+                log.debug(
+                        invocation.getThis().getClass().getName()
+                                + "."
+                                + specificMethod.getName()
+                                + "-->@CacheDeleteTransactional");
                 return cacheHandler.proceedDeleteCacheTransactional(
                         new DeleteCacheTransactionalAopProxy(invocation), cacheDeleteTransactional);
             }

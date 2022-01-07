@@ -1,5 +1,9 @@
 package com.jarvis.cache.starter.autoconfigure;
 
+import com.jarvis.cache.aop.springaop.MethodAnnotationPointcutAdvisor;
+import com.jarvis.cache.aop.springaop.interceptor.CacheDeleteMethodInterceptor;
+import com.jarvis.cache.aop.springaop.interceptor.CacheDeleteTransactionalMethodInterceptor;
+import com.jarvis.cache.aop.springaop.interceptor.CacheMethodInterceptor;
 import com.jarvis.cache.common.annotation.Cache;
 import com.jarvis.cache.common.annotation.CacheDelete;
 import com.jarvis.cache.common.annotation.CacheDeleteTransactional;
@@ -11,9 +15,7 @@ import com.jarvis.cache.serializer.api.clone.ICloner;
 import com.jarvis.cache.serializer.api.serializer.ISerializer;
 import com.jarvis.cache.starter.admin.AutoloadCacheController;
 import com.jarvis.cache.starter.admin.HTTPBasicAuthorizeAttribute;
-import com.jarvis.cache.starter.interceptor.CacheDeleteInterceptor;
-import com.jarvis.cache.starter.interceptor.CacheDeleteTransactionalInterceptor;
-import com.jarvis.cache.starter.interceptor.CacheMethodInterceptor;
+import com.jarvis.cache.starter.properties.AutoloadCacheProperties;
 
 import javax.annotation.PostConstruct;
 
@@ -53,6 +55,10 @@ public class AutoloadCacheAutoConfigure {
 
     private final ILock lock;
 
+    /**
+     * 配置分布式锁 <br>
+     * {@link DistributedLockConfiguration distributedLockConfiguration}
+     */
     public AutoloadCacheAutoConfigure(ObjectProvider<ILock> lockProvider) {
         if (null != lockProvider) {
             lock = lockProvider.getIfAvailable();
@@ -61,6 +67,11 @@ public class AutoloadCacheAutoConfigure {
         }
     }
 
+    /**
+     * 校验关键对象是否为空
+     *
+     * @return cacheManagerValidator
+     */
     @Bean(name = VALIDATOR_BEAN_NAME)
     public CacheManagerValidator autoloadCacheAutoConfigurationValidator() {
         return new CacheManagerValidator();
@@ -77,15 +88,14 @@ public class AutoloadCacheAutoConfigure {
         return cacheHandler;
     }
 
-    // 1. 创建通知 suixingpay.autoload.cache. 和
-    // suixingpay.autoload.cache.enable-delete
+    // -------------------------------- 注册拦截器（通知） --------------------------------
     @Bean
     @ConditionalOnBean(CacheHandler.class)
     @ConditionalOnProperty(
             value = AutoloadCacheProperties.PREFIX + ".enable-read-and-write",
             matchIfMissing = true)
     public CacheMethodInterceptor autoloadCacheMethodInterceptor(CacheHandler cacheHandler) {
-        return new CacheMethodInterceptor(cacheHandler, config);
+        return new CacheMethodInterceptor(cacheHandler, config.isEnable());
     }
 
     @Bean
@@ -93,8 +103,8 @@ public class AutoloadCacheAutoConfigure {
     @ConditionalOnProperty(
             value = AutoloadCacheProperties.PREFIX + ".enable-delete",
             matchIfMissing = true)
-    public CacheDeleteInterceptor autoloadCacheDeleteInterceptor(CacheHandler cacheHandler) {
-        return new CacheDeleteInterceptor(cacheHandler, config);
+    public CacheDeleteMethodInterceptor autoloadCacheDeleteInterceptor(CacheHandler cacheHandler) {
+        return new CacheDeleteMethodInterceptor(cacheHandler, config.isEnable());
     }
 
     @Bean
@@ -102,12 +112,12 @@ public class AutoloadCacheAutoConfigure {
     @ConditionalOnProperty(
             value = AutoloadCacheProperties.PREFIX + ".enable-delete",
             matchIfMissing = true)
-    public CacheDeleteTransactionalInterceptor autoloadCacheDeleteTransactionalInterceptor(
+    public CacheDeleteTransactionalMethodInterceptor autoloadCacheDeleteTransactionalInterceptor(
             CacheHandler cacheHandler) {
-        return new CacheDeleteTransactionalInterceptor(cacheHandler, config);
+        return new CacheDeleteTransactionalMethodInterceptor(cacheHandler, config.isEnable());
     }
 
-    // 2.配置Advisor
+    // -------------------------------- 配置Advisor --------------------------------
     @Bean("autoloadCacheAdvisor")
     @ConditionalOnBean(CacheMethodInterceptor.class)
     public AbstractPointcutAdvisor autoloadCacheAdvisor(
@@ -119,22 +129,23 @@ public class AutoloadCacheAutoConfigure {
     }
 
     @Bean("autoloadCacheDeleteAdvisor")
-    @ConditionalOnBean(CacheDeleteInterceptor.class)
+    @ConditionalOnBean(CacheDeleteMethodInterceptor.class)
     public AbstractPointcutAdvisor autoloadCacheDeleteAdvisor(
-            CacheDeleteInterceptor cacheDeleteInterceptor) {
+            CacheDeleteMethodInterceptor cacheDeleteMethodInterceptor) {
         AbstractPointcutAdvisor cacheDeleteAdvisor =
-                new MethodAnnotationPointcutAdvisor(CacheDelete.class, cacheDeleteInterceptor);
+                new MethodAnnotationPointcutAdvisor(
+                        CacheDelete.class, cacheDeleteMethodInterceptor);
         cacheDeleteAdvisor.setOrder(config.getDeleteCacheOrder());
         return cacheDeleteAdvisor;
     }
 
     @Bean("autoloadCacheDeleteTransactionalAdvisor")
-    @ConditionalOnBean(CacheDeleteTransactionalInterceptor.class)
+    @ConditionalOnBean(CacheDeleteTransactionalMethodInterceptor.class)
     public AbstractPointcutAdvisor autoloadCacheDeleteTransactionalAdvisor(
-            CacheDeleteTransactionalInterceptor cacheDeleteTransactionalInterceptor) {
+            CacheDeleteTransactionalMethodInterceptor cacheDeleteTransactionalMethodInterceptor) {
         AbstractPointcutAdvisor cacheDeleteTransactionalAdvisor =
                 new MethodAnnotationPointcutAdvisor(
-                        CacheDeleteTransactional.class, cacheDeleteTransactionalInterceptor);
+                        CacheDeleteTransactional.class, cacheDeleteTransactionalMethodInterceptor);
         cacheDeleteTransactionalAdvisor.setOrder(config.getDeleteCacheTransactionalOrder());
         return cacheDeleteTransactionalAdvisor;
     }
@@ -145,12 +156,18 @@ public class AutoloadCacheAutoConfigure {
     public AbstractAdvisorAutoProxyCreator autoloadCacheAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator proxy = new DefaultAdvisorAutoProxyCreator();
         proxy.setAdvisorBeanNamePrefix("autoloadCache");
+        // 代理有两种方式：一种是接口代理（上文提到过的动态代理），一种是CGLIB。默认有接口的类采用接口代理，否则使用CGLIB。如果设置成true,则直接使用CGLIB；
         proxy.setProxyTargetClass(config.isProxyTargetClass());
         // proxy.setInterceptorNames("cacheAdvisor","cacheDeleteAdvisor","cacheDeleteTransactionalAdvisor");//
         // 注意此处不需要设置，否则会执行两次
         return proxy;
     }
 
+    /**
+     * 配置请求过滤器，拦截指定url的请求 todo 请求的目的还不确定
+     *
+     * @return
+     */
     @Bean
     @ConditionalOnWebApplication
     public FilterRegistrationBean filterRegistrationBean() {
@@ -171,6 +188,7 @@ public class AutoloadCacheAutoConfigure {
         return new AutoloadCacheController(autoloadCacheHandler);
     }
 
+    /** 校验 表达式解析/序列化/内存管理 是否为空 */
     static class CacheManagerValidator {
 
         @Autowired(required = false)

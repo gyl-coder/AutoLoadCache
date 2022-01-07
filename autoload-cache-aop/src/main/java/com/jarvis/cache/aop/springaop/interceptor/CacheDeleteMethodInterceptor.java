@@ -1,71 +1,63 @@
-package com.jarvis.cache.starter.interceptor;
+package com.jarvis.cache.aop.springaop.interceptor;
 
+import com.jarvis.cache.aop.springaop.interceptor.aopproxy.DeleteCacheAopProxy;
+import com.jarvis.cache.aop.springaop.util.AopUtil;
 import com.jarvis.cache.common.annotation.CacheDelete;
 import com.jarvis.cache.core.CacheHandler;
-import com.jarvis.cache.starter.autoconfigure.AutoloadCacheProperties;
-import com.jarvis.cache.starter.interceptor.aopproxy.DeleteCacheAopProxy;
-import com.jarvis.cache.starter.util.AopUtil;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
 
 import java.lang.reflect.Method;
 
-/** 对@CacheDelete 拦截注解 */
-public class CacheDeleteInterceptor implements MethodInterceptor {
+/** 对 {@link CacheDelete } 拦截注解 */
+@Slf4j
+public class CacheDeleteMethodInterceptor implements MethodInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(CacheDeleteInterceptor.class);
+    /** 是否开启 对 @CacheDelete 注解的增强逻辑 */
+    private final boolean isEnable;
 
     private final CacheHandler cacheHandler;
 
-    private final AutoloadCacheProperties config;
-
-    public CacheDeleteInterceptor(CacheHandler cacheHandler, AutoloadCacheProperties config) {
+    public CacheDeleteMethodInterceptor(CacheHandler cacheHandler, boolean isEnable) {
         this.cacheHandler = cacheHandler;
-        this.config = config;
+        this.isEnable = isEnable;
     }
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        if (!this.config.isEnable()) {
+        if (isEnable) {
             return invocation.proceed();
         }
         Method method = invocation.getMethod();
         // if (method.getDeclaringClass().isInterface()) {
         Class<?> cls = AopUtil.getTargetClass(invocation.getThis());
         if (!cls.equals(invocation.getThis().getClass())) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(invocation.getThis().getClass() + "-->" + cls);
-            }
+            log.debug(invocation.getThis().getClass() + "-->" + cls);
             return invocation.proceed();
         }
         // }
         Object result = invocation.proceed();
         if (method.isAnnotationPresent(CacheDelete.class)) {
             CacheDelete cacheDelete = method.getAnnotation(CacheDelete.class);
-            if (logger.isDebugEnabled()) {
-                logger.debug(
-                        invocation.getThis().getClass().getName()
-                                + "."
-                                + method.getName()
-                                + "-->@CacheDelete");
-            }
+            log.debug(
+                    invocation.getThis().getClass().getName()
+                            + "."
+                            + method.getName()
+                            + "-->@CacheDelete");
             cacheHandler.deleteCache(new DeleteCacheAopProxy(invocation), cacheDelete, result);
         } else {
             Method specificMethod =
                     AopUtils.getMostSpecificMethod(method, invocation.getThis().getClass());
             if (specificMethod.isAnnotationPresent(CacheDelete.class)) {
                 CacheDelete cacheDelete = specificMethod.getAnnotation(CacheDelete.class);
-                if (logger.isDebugEnabled()) {
-                    logger.debug(
-                            invocation.getThis().getClass().getName()
-                                    + "."
-                                    + specificMethod.getName()
-                                    + "-->@CacheDelete");
-                }
+                log.debug(
+                        invocation.getThis().getClass().getName()
+                                + "."
+                                + specificMethod.getName()
+                                + "-->@CacheDelete");
                 cacheHandler.deleteCache(new DeleteCacheAopProxy(invocation), cacheDelete, result);
             }
         }

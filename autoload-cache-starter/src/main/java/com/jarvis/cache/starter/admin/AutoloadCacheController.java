@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+/** 内置内存管理功能 */
 @Slf4j
 @RestController
 @RequestMapping("/autoload-cache")

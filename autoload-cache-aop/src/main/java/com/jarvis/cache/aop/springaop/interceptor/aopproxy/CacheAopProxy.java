@@ -1,4 +1,4 @@
-package com.jarvis.cache.starter.interceptor.aopproxy;
+package com.jarvis.cache.aop.springaop.interceptor.aopproxy;
 
 import com.jarvis.cache.common.aop.CacheAopProxyChain;
 

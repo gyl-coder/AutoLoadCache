@@ -1,8 +1,8 @@
 package com.jarvis.cache.manager.impl.map;
 
 import com.jarvis.cache.common.MSetParam;
+import com.jarvis.cache.common.config.AutoLoadConfig;
 import com.jarvis.cache.common.exception.CacheCenterConnectionException;
-import com.jarvis.cache.common.to.AutoLoadConfig;
 import com.jarvis.cache.common.to.CacheKeyTO;
 import com.jarvis.cache.common.to.CacheWrapper;
 import com.jarvis.cache.manager.api.ICacheManager;

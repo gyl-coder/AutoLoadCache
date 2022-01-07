@@ -35,6 +35,10 @@
     <dependencies>
         <dependency>
             <groupId>com.github.qiujiayu</groupId>
+            <artifactId>autoload-cache-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.qiujiayu</groupId>
             <artifactId>autoload-cache-core</artifactId>
         </dependency>
         <dependency>

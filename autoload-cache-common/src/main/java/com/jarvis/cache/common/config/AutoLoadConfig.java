@@ -1,4 +1,4 @@
-package com.jarvis.cache.common.to;
+package com.jarvis.cache.common.config;
 
 import com.jarvis.cache.common.type.AutoLoadQueueSortType;
 

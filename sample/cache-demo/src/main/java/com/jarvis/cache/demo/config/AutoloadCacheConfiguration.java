@@ -5,7 +5,7 @@ import com.jarvis.cache.manager.impl.map.MapCacheManager;
 import com.jarvis.cache.serializer.api.clone.ICloner;
 import com.jarvis.cache.serializer.api.serializer.ISerializer;
 import com.jarvis.cache.serializer.impl.fastjson.FastjsonSerializer;
-import com.jarvis.cache.starter.autoconfigure.AutoloadCacheProperties;
+import com.jarvis.cache.starter.properties.AutoloadCacheProperties;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

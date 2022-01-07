@@ -5,11 +5,13 @@ import com.jarvis.cache.manager.impl.jedis.JedisClusterCacheManager;
 import com.jarvis.cache.manager.impl.lettuce.LettuceRedisClusterCacheManager;
 import com.jarvis.cache.manager.impl.redis.AbstractRedisCacheManager;
 import com.jarvis.cache.script.api.AbstractScriptParser;
+import com.jarvis.cache.script.ognl.OgnlParser;
 import com.jarvis.cache.script.springel.SpringELParser;
 import com.jarvis.cache.serializer.api.serializer.ISerializer;
 import com.jarvis.cache.serializer.impl.hession.HessianSerializer;
 import com.jarvis.cache.serializer.impl.jdk.JdkSerializer;
 import com.jarvis.cache.serializer.impl.kryo.KryoSerializer;
+import com.jarvis.cache.starter.properties.AutoloadCacheProperties;
 import com.jarvis.cache.starter.redis.SpringRedisCacheManager;
 
 import io.lettuce.core.RedisClient;
@@ -38,6 +40,8 @@ import java.lang.reflect.Field;
 
 /**
  * 对autoload-cache进行一些默认配置<br>
+ * 1. 配置表达式解析器<br>
+ * 2. 配置序列化工具<br>
  * 如果需要自定义，需要自行覆盖即可
  */
 @Slf4j
@@ -48,6 +52,7 @@ import java.lang.reflect.Field;
 @ConditionalOnProperty(value = "autoload.cache.enable", matchIfMissing = true)
 public class AutoloadCacheManageConfiguration {
 
+    // ClassUtils.isPresent 通过反射判断指定类是否存在
     private static final boolean hessianPresent =
             ClassUtils.isPresent(
                     "com.caucho.hessian.io.AbstractSerializerFactory",
@@ -63,7 +68,7 @@ public class AutoloadCacheManageConfiguration {
      * 如果导入了Ognl的jar包，优先 使用Ognl表达式：{@link OgnlParser OgnlParser}，否则使用{@link SpringELParser
      * SpringELParser}<br>
      *
-     * @return
+     * @return todo 这个规则是否生效？？ 直接返回了 SpringELParser ，OgnlParser 从哪里返回？？？？
      */
     @Bean
     @ConditionalOnMissingBean(AbstractScriptParser.class)
